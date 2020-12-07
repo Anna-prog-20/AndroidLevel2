@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/styleActivity3"
+    android:baselineAligned="false">
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragmentMainWeather"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:name="com.example.androidlevel2_lesson1.FragmentWeather"
+                tools:layout="@layout/fragment_weather">
+            </androidx.fragment.app.FragmentContainerView>
+</LinearLayout>
