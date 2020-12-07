@@ -1,0 +1,68 @@
+<resources>
+    <string name="app_name">Погода</string>
+    <string name="date_current">текущая дата</string>
+    <string name="time_current">текущее время</string>
+    <string name="temperature">%d \u2103</string>
+    <string name="hintTown">Введите город</string>
+    <string name="messageTown">Введенного города в списке не найдено</string>
+    <string name="town">Чита</string>
+    <string-array name="listTown">
+        <item>Чита</item>
+        <item>Могоча</item>
+        <item>Краснокаменск</item>
+        <item>Москва</item>
+        <item>Челябинск</item>
+        <item>Усурийск</item>
+        <item>Киров</item>
+        <item>Екатеринбург</item>
+        <item>Новосибирск</item>
+        <item>Иркутск</item>
+        <item>Улан-Удэ</item>
+        <item>Хабаровск</item>
+        <item>Владивосток</item>
+        <item>Краснодар</item>
+        <item>Воронеж</item>
+    </string-array>
+    <string-array name="listHistoryWeather">
+        <item>Чита</item>
+        <item>Могоча</item>
+        <item>Краснокаменск</item>
+        <item>Москва</item>
+        <item>Воронеж</item>
+    </string-array>
+    <string name="buttonSelect">Выбрать</string>
+    <string name="settings">Настройки</string>
+    <string name="windSpeed">Скорость ветра</string>
+    <string name="txtWindSpeed">%d м/с</string>
+    <string name="pressure">Атмосферное давление</string>
+    <string name="txtPressure">%d гПА</string>
+    <string name="addSettings">Дополнительные настройки</string>
+    <string name="themeBlack">Темная</string>
+    <string name="themeWhite">Светлая</string>
+    <string name="theme">Темы приложения</string>
+    <string name="imageContentDescription">Солнечно</string>
+    <string name="templateTemperature">%d \u2103</string>
+    <string name="templateWindSpeed">%d м/с</string>
+    <string name="templatePressure">%d гПА</string>
+    <string name="itemInfo">О программе</string>
+    <string name="itemInfoTown">О городе</string>
+    <string name="itemHistoryWeather">История прогнозов</string>
+    <string name="itemSetting">Настройки</string>
+    <string name="itemAdd">Добавить город в список</string>
+    <string name="itemDelete">Удалить город из списка</string>
+    <string name="itemClear">Отчистить список</string>
+    <string name="large_text">
+        "О программе Погода.\n\n"
+
+        "Разработчики: Шишмарева Анна Владимировна.\n\n"
+        "При поддержке GeekBrains"
+    </string>
+    <string name="action_settings">Настройки</string>
+    <string name="itemTown">Выбор города</string>
+    <string name="weatherURL">https://api.openweathermap.org/data/2.5/forecast?q=%s&amp;units=metric&amp;appid=%s</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Мое первое погодное приложение</string>
+    <string name="nav_header_subtitle">режим создания...</string>
+</resources>
