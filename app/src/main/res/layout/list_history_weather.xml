@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/fragmentHistoryWeatherList"
-        android:name="com.example.androidlevel2_lesson1.historyWeather.FragmentHistoryWeatherList"
+        android:name="com.example.androidlevel2_lesson1.historyWeather.FragmentHistoryWeather"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:defaultNavHost="true"

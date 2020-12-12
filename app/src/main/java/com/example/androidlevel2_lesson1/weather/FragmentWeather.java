@@ -60,10 +60,12 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
     }
 
     public DataContainer getDataCurrent(){
-        if (getArguments() != null)
+        if (getArguments() != null) {
             return (DataContainer) getArguments().getSerializable(dataKey);
-        else
+        }
+        else {
             return (DataContainer) requireActivity().getIntent().getSerializableExtra(dataKey);
+        }
     }
 
     @Override
@@ -217,12 +219,16 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
     }
 
     private void setArrayList(WeatherRequest weatherRequest){
+        Long weatherRequestCurrent, weatherRequestNext;
         DateFormat dateFormat = new SimpleDateFormat("dd.MM", Locale.getDefault());
         arrayListWeek=new ArrayList<>();
         arrayListTemperature=new ArrayList<>();
         for(int i=t+1;i<weatherRequest.getList().length-1;i++){
-            if(!dateFormat.format(weatherRequest.getList()[i].getDt() * 1000).equals(dateFormat.format(weatherRequest.getList()[i + 1].getDt() * 1000))&!dateFormat.format(weatherRequest.getList()[i].getDt() * 1000).equals(dateFormat.format(weatherRequest.getList()[t].getDt() * 1000))) {
-                    arrayListWeek.add(dateFormat.format(weatherRequest.getList()[i].getDt() * 1000));
+            weatherRequestCurrent = weatherRequest.getList()[i].getDt() * 1000;
+            weatherRequestNext = weatherRequest.getList()[i + 1].getDt() * 1000;
+            if(!dateFormat.format(weatherRequestCurrent).equals(dateFormat.format(weatherRequestNext))&
+                    !dateFormat.format(weatherRequestCurrent).equals(dateFormat.format(weatherRequest.getList()[t].getDt() * 1000))) {
+                    arrayListWeek.add(dateFormat.format(weatherRequestCurrent));
                     arrayListTemperature.add(getString(R.string.temperature, Math.round(weatherRequest.getList()[i].getMain().getTemp())));
             }
         }

@@ -4,12 +4,9 @@ package com.example.androidlevel2_lesson1.town;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             switch (id) {
                 case R.id.btnAdd: {
                     FragmentManager fm = getSupportFragmentManager();
-                    FragmentTownList fragment = (FragmentTownList) fm.findFragmentById(R.id.fragmentTownList);
+                    FragmentTown fragment = (FragmentTown) fm.findFragmentById(R.id.fragmentTownList);
                     if (fragment != null) {
                         fragment.setTownSelected(dialogFragment.getText());
                         fragment.validate(dialogFragment.getText());
@@ -80,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public boolean onQueryTextSubmit(String query) {
                 FragmentManager fm = getSupportFragmentManager();
-                FragmentTownList fragment = (FragmentTownList) fm.findFragmentById(R.id.fragmentTownList);
+                FragmentTown fragment = (FragmentTown) fm.findFragmentById(R.id.fragmentTownList);
                 if (fragment != null) {
                     fragment.setTownSelected(query);
                     fragment.validate(searchText);

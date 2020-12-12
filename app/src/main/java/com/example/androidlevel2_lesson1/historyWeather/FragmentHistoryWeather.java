@@ -20,7 +20,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class FragmentHistoryWeatherList extends Fragment implements IRVOnItemClick {
+public class FragmentHistoryWeather extends Fragment implements IRVOnItemClick {
     private RecyclerView town;
     private String townSelected;
     private ArrayList<String> arrayListHistoryWeather;

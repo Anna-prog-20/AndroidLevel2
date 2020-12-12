@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.androidlevel2_lesson1.DataContainer;
+import com.example.androidlevel2_lesson1.historyWeather.ActivityHistoryWeather;
 import com.example.androidlevel2_lesson1.town.MainActivity;
 import com.example.androidlevel2_lesson1.R;
 import com.example.androidlevel2_lesson1.info.ActivityInfo;
@@ -81,8 +82,8 @@ public class ActivitySettings extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }
-            case R.id.itemInfo: {
-                Intent intent = new Intent(this, ActivityInfo.class);
+            case R.id.itemHistoryWeather: {
+                Intent intent = new Intent(this, ActivityHistoryWeather.class);
                 startActivity(intent);
                 return true;
             }

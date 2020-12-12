@@ -18,7 +18,7 @@ import com.google.android.material.navigation.NavigationView;
 public class ActivityHistoryWeather extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DataContainer currentData;
-    private FragmentHistoryWeatherList fragment;
+    private FragmentHistoryWeather fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,7 @@ public class ActivityHistoryWeather extends AppCompatActivity implements Navigat
             @Override
             public boolean onQueryTextSubmit(String query) {
                 FragmentManager fm = getSupportFragmentManager();
-                fragment = (FragmentHistoryWeatherList) fm.findFragmentById(R.id.fragmentHistoryWeatherList);
+                fragment = (FragmentHistoryWeather) fm.findFragmentById(R.id.fragmentHistoryWeatherList);
                 if (fragment != null) {
                     fragment.setTownSelected(query);
                     fragment.validate(searchText);
@@ -83,7 +83,7 @@ public class ActivityHistoryWeather extends AppCompatActivity implements Navigat
             case R.id.itemClear: {
                 FragmentManager fm = getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
-                fragment = (FragmentHistoryWeatherList) fm.findFragmentById(R.id.fragmentHistoryWeatherList);
+                fragment = (FragmentHistoryWeather) fm.findFragmentById(R.id.fragmentHistoryWeatherList);
                 if (fragment != null) {
                     fragment.clearList();
                 }

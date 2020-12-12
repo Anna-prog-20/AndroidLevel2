@@ -35,7 +35,12 @@ public class Connection extends Thread implements Runnable{
             urlConnection.setReadTimeout(10000);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            System.out.println(in);
+            if (urlConnection.getInputStream() != null) {
+                connect = true;
+            }
+            else {
+                connect = false;
+            }
             String result = getLines(in);
             Gson gson = new Gson();
             final WeatherRequest weatherRequest = gson.fromJson(result, WeatherRequest.class);
@@ -49,9 +54,8 @@ public class Connection extends Thread implements Runnable{
                     }
                 }
             });
-            connect = true;
+
         } catch (Exception e) {
-            connect = false;
             e.printStackTrace();
         }
         finally {

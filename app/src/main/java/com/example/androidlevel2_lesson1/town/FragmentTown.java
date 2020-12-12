@@ -34,7 +34,7 @@ import java.util.Arrays;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class FragmentTownList extends Fragment implements IRVOnItemClick, OnFragmentDialogListener {
+public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragmentDialogListener {
     private boolean isExistWeather=false;
     private DataContainer currentData;
     private RecyclerView town;
@@ -118,7 +118,7 @@ public class FragmentTownList extends Fragment implements IRVOnItemClick, OnFrag
         town=view.findViewById(R.id.listTown);
         arrayListTown=new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.listTown)));
         if (arrayList == null) {
-            FragmentTownList.arrayList = arrayListTown;
+            FragmentTown.arrayList = arrayListTown;
         }
     }
 
@@ -143,7 +143,7 @@ public class FragmentTownList extends Fragment implements IRVOnItemClick, OnFrag
 
     private void setupRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        RecyclerDataAdapterTown adapterTown = new RecyclerDataAdapterTown(FragmentTownList.arrayList, this);
+        RecyclerDataAdapterTown adapterTown = new RecyclerDataAdapterTown(FragmentTown.arrayList, this);
         town.setLayoutManager(layoutManager);
         town.setAdapter(adapterTown);
     }

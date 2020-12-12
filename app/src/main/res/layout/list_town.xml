@@ -9,7 +9,7 @@
 
     <fragment
         android:id="@+id/fragmentTownList"
-        android:name="com.example.androidlevel2_lesson1.town.FragmentTownList"
+        android:name="com.example.androidlevel2_lesson1.town.FragmentTown"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"

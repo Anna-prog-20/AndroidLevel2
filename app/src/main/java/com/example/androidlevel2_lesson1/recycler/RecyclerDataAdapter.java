@@ -30,10 +30,12 @@ public class RecyclerDataAdapter extends RecyclerView.Adapter<RecyclerDataAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if(dataText!=null)
-            holder.setTextToTextView(dataHeading.get(position),dataText.get(position));
-        else if (dataHeading!=null)
+        if(dataText!=null) {
+            holder.setTextToTextView(dataHeading.get(position), dataText.get(position));
+        }
+        else if (dataHeading!=null) {
             holder.setTextToTextView(dataHeading.get(position));
+        }
     }
 
     @Override
