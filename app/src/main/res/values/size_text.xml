@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="townCurrent">30sp</dimen>
+    <dimen name="dateCurrent">18sp</dimen>
+    <dimen name="timeCurrent">16sp</dimen>
+    <dimen name="imageTemperatureW">150dp</dimen>
+    <dimen name="imageTemperatureH">150dp</dimen>
+    <dimen name="temperatureCurrent">30sp</dimen>
+    <dimen name="windSpeed">15sp</dimen>
+    <dimen name="pressure">15sp</dimen>
+    <dimen name="table">20sp</dimen>
+    <dimen name="list">18sp</dimen>
+</resources>
