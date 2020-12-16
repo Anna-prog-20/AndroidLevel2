@@ -11,7 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.androidlevel2_lesson1.DataContainer;
+import com.example.androidlevel2_lesson1.data.DataContainer;
 import com.example.androidlevel2_lesson1.R;
 import com.google.android.material.navigation.NavigationView;
 

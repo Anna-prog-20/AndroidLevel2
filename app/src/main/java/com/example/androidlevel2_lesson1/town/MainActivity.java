@@ -6,7 +6,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,7 +17,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 
-import com.example.androidlevel2_lesson1.DataContainer;
+import com.example.androidlevel2_lesson1.data.DataContainer;
 import com.example.androidlevel2_lesson1.R;
 import com.example.androidlevel2_lesson1.dialog.BottomDialogFragment;
 import com.example.androidlevel2_lesson1.dialog.OnFragmentDialogListener;
@@ -33,9 +32,9 @@ import java.util.Objects;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private TextView town;
-    //private String searchTown;
+
     private DataContainer currentData;
+
     private OnFragmentDialogListener onFragmentDialogListener = new OnFragmentDialogListener() {
         @Override
         public void onDialogResult(int id) {
@@ -62,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(getResources().getConfiguration().orientation== Configuration.ORIENTATION_LANDSCAPE){
             setTitle(R.string.app_name);
         }else setTitle(R.string.itemTown);
-        initViews();
         Toolbar toolbarMain = initToolbar();
         initDrawer(toolbarMain);
     }
@@ -153,11 +151,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onRestoreInstanceState(@Nullable Bundle savedInstanceState) {
         assert savedInstanceState != null;
         super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    private void initViews() {
-        if(findViewById(R.id.townCurrent)!=null)
-            town=findViewById(R.id.townCurrent);
     }
 
     private Toolbar initToolbar() {

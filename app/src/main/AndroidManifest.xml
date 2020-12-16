@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.androidlevel2_lesson1">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -12,7 +12,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.androidlevel2_lesson1.town.MainActivity"
+        <service
+            android:name=".data.ServiceConnectionWeather"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name=".town.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,16 +26,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.androidlevel2_lesson1.weather.ActivityWeather"/>
-        <activity android:name="com.example.androidlevel2_lesson1.historyWeather.ActivityHistoryWeather"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".weather.ActivityWeather" />
         <activity
-            android:name="com.example.androidlevel2_lesson1.info.ActivityInfo"
+            android:name=".historyWeather.ActivityHistoryWeather"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".info.ActivityInfo"
             android:label="@string/itemInfo"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name="com.example.androidlevel2_lesson1.setting.ActivitySettings"
-            android:noHistory="true"/>
-
+        <activity
+            android:name=".setting.ActivitySettings"
+            android:noHistory="true" />
     </application>
 
 </manifest>

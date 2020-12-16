@@ -15,7 +15,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.androidlevel2_lesson1.DataContainer;
+import com.example.androidlevel2_lesson1.data.DataContainer;
 import com.example.androidlevel2_lesson1.IRVOnItemClick;
 import com.example.androidlevel2_lesson1.R;
 import com.example.androidlevel2_lesson1.dialog.DialogBuilderFragment;

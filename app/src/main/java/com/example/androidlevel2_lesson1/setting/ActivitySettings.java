@@ -11,11 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.androidlevel2_lesson1.DataContainer;
+import com.example.androidlevel2_lesson1.data.DataContainer;
 import com.example.androidlevel2_lesson1.historyWeather.ActivityHistoryWeather;
 import com.example.androidlevel2_lesson1.town.MainActivity;
 import com.example.androidlevel2_lesson1.R;
-import com.example.androidlevel2_lesson1.info.ActivityInfo;
 import com.example.androidlevel2_lesson1.weather.ActivityWeather;
 
 import static com.example.androidlevel2_lesson1.weather.FragmentWeather.dataKey;

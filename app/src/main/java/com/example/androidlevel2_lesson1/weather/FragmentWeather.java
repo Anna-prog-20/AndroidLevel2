@@ -1,9 +1,12 @@
 package com.example.androidlevel2_lesson1.weather;
 
-import android.annotation.SuppressLint;
-import android.graphics.Color;
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,25 +19,26 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.androidlevel2_lesson1.Connection;
-import com.example.androidlevel2_lesson1.DataContainer;
+import com.example.androidlevel2_lesson1.data.DataContainer;
+import com.example.androidlevel2_lesson1.data.FragmentOfData;
+import com.example.androidlevel2_lesson1.data.InputDataContainer;
+import com.example.androidlevel2_lesson1.data.ProcessingData;
+import com.example.androidlevel2_lesson1.data.ServiceConnectionWeather;
+import com.example.androidlevel2_lesson1.data.ServiceConnectionWeather.ServiceBinder;
 import com.example.androidlevel2_lesson1.ThermometerView;
 import com.example.androidlevel2_lesson1.dialog.DialogBuilderFragment;
 import com.example.androidlevel2_lesson1.dialog.OnFragmentDialogListener;
 import com.example.androidlevel2_lesson1.R;
 import com.example.androidlevel2_lesson1.recycler.RecyclerDataAdapter;
-import com.example.androidlevel2_lesson1.model.WeatherRequest;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
-public class FragmentWeather extends Fragment implements OnFragmentDialogListener {
+import static android.content.Context.BIND_AUTO_CREATE;
+
+public class FragmentWeather extends Fragment implements OnFragmentDialogListener, FragmentOfData {
+    static final String BROADCAST_ACTION_SERVICEFINISHED = "com.example.androidlevel2_lesson1.town.servicefinished";
     public static final String dataKey = "dataKey";
     private TextView date;
     private TextView time;
@@ -43,13 +47,55 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
     private TextView windSpeed;
     private TextView pressure;
     private RecyclerView listWeather;
-    private ArrayList<String> arrayListWeek;
-    private ArrayList<String> arrayListTemperature;
     private DataContainer currentData;
     private int t=0;
     private DialogBuilderFragment dlgBuilder;
-    private Connection connection;
     private ThermometerView thermometerView;
+    private boolean isBound = false;
+    private ServiceBinder boundService;
+    private static Handler handler;
+    // Обработка соединения с сервисом
+    private ServiceConnection boundServiceConnection = new ServiceConnection() {
+
+        // При соединении с сервисом
+        @Override
+        public void onServiceConnected(ComponentName name, final IBinder service) {
+            final boolean[] b = {false};
+            try {
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        boundService = (ServiceBinder) service;
+                        isBound = boundService != null;
+                    }
+                });
+                thread.start();
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (!boundService.getConnection().getConnect()) {
+                        dlgBuilder.show(requireActivity().getSupportFragmentManager(),"dialogBuilder");
+                    }
+                    if (boundService.getConnection().getObtainedData() != null) {
+                        ProcessingData processingData = new ProcessingData(handler, (FragmentWeather) requireActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentMainWeather), boundService.getObtainedData());
+                        processingData.start();
+                    }
+                }
+            }).start();
+        }
+
+        // При разрыве соединения с сервисом
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.i("TAG","ServiceConnection onServiceDisconnected");
+            isBound = false;
+            boundService = null;
+        }
+    };
 
     public static FragmentWeather create(DataContainer currentData){
         FragmentWeather f=new FragmentWeather();
@@ -83,6 +129,20 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
         super.onPause();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (isBound){
+            requireActivity().unbindService(boundServiceConnection);
+        }
+
+    }
+
     private boolean check(TextView textView){
         return textView.getVisibility() == View.VISIBLE;
     }
@@ -90,7 +150,6 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
        super.onCreate(savedInstanceState);
-
     }
 
     @Nullable
@@ -106,18 +165,20 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
         outputData();
         try {
             final URL uri = new URL(getString(R.string.weatherURL,town.getText(), "80efcfee52d4195b8ef83e2e5b69a707"));
-            final Handler handler = new Handler();
-            Connection connection = new Connection(uri,handler, (FragmentWeather) requireActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentMainWeather));
-            connection.start();
-            connection.join();
-            if (connection.getConnect() == false) {
-                dlgBuilder.show(requireActivity().getSupportFragmentManager(),"dialogBuilder");
-            }
-        } catch (MalformedURLException | InterruptedException e) {
+            handler = new Handler();
+            final Activity activity = requireActivity();
+            Intent intent = new Intent(requireActivity(), ServiceConnectionWeather.class);
+            intent.putExtra("uri", uri);
+            activity.startService(intent);
+            requireActivity().bindService(intent,
+                    boundServiceConnection,
+                    BIND_AUTO_CREATE);
+        } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         super.onViewCreated(view, savedInstanceState);
     }
+
 
     private void initViews(View view) {
         currentData = getDataCurrent();
@@ -181,61 +242,25 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
         }
     }
 
-    public void displayWeather(WeatherRequest weatherRequest) throws ParseException {
-        Date dateCurrent=new Date();
-        setDate(dateText(dateCurrent,weatherRequest));
-        setTime(timeText(dateCurrent));
-        String temperatureValue = getString(R.string.temperature, Math.round(weatherRequest.getList()[t].getMain().getTemp()));
-        thermometerView.setLevel(Math.round(weatherRequest.getList()[t].getMain().getTemp()));
-        temperature.setText(temperatureValue);
-        String pressureText = getString(R.string.txtPressure, weatherRequest.getList()[t].getMain().getPressure());
-        pressure.setText(pressureText);
-        currentData.setPressure(weatherRequest.getList()[t].getMain().getPressure());
-        String windSpeedStr = getString(R.string.txtWindSpeed, Math.round(weatherRequest.getList()[t].getWind().getSpeed()));
-        windSpeed.setText(windSpeedStr);
-        currentData.setWindSpeed(Math.round(weatherRequest.getList()[t].getWind().getSpeed()));
-        setArrayList(weatherRequest);
-        setupRecyclerView();
+    private void inputData(InputDataContainer inputDataContainer) {
+        setDate(inputDataContainer.date);
+        setTime(inputDataContainer.time);
+        setTemperature(inputDataContainer.temperature);
+        setPressure(inputDataContainer.pressure);
+        setWindSpeed(inputDataContainer.windSpeed);
+        setupRecyclerView(inputDataContainer);
     }
 
-    private String dateText(Date dateCurrent,WeatherRequest weatherRequest) throws ParseException {
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-        for(int i=0;i<weatherRequest.getList().length;i++){
-            @SuppressLint("SimpleDateFormat") String dateString0=new SimpleDateFormat("dd.MM.yyyy HH:mm").format(weatherRequest.getList()[i].getDt()*1000);
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat();
-            format.applyPattern("dd.MM.yyyy");
-            Date dateSearch= format.parse(dateString0);
-            if(dateCurrent.after(dateSearch)){
-                t=i;
-                break;
-            }
-        }
-        return dateFormat.format(weatherRequest.getList()[t].getDt()*1000);
+    @Override
+    public void displayWeather(final InputDataContainer inputDataContainer) throws ParseException {
+        inputData(inputDataContainer);
+        thermometerView.setLevel(inputDataContainer.levelThermometer);
+        thermometerView.invalidate();
     }
 
-    private String timeText(Date dateCurrent){
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        return timeFormat.format(dateCurrent);
-    }
-
-    private void setArrayList(WeatherRequest weatherRequest){
-        Long weatherRequestCurrent, weatherRequestNext;
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM", Locale.getDefault());
-        arrayListWeek=new ArrayList<>();
-        arrayListTemperature=new ArrayList<>();
-        for(int i=t+1;i<weatherRequest.getList().length-1;i++){
-            weatherRequestCurrent = weatherRequest.getList()[i].getDt() * 1000;
-            weatherRequestNext = weatherRequest.getList()[i + 1].getDt() * 1000;
-            if(!dateFormat.format(weatherRequestCurrent).equals(dateFormat.format(weatherRequestNext))&
-                    !dateFormat.format(weatherRequestCurrent).equals(dateFormat.format(weatherRequest.getList()[t].getDt() * 1000))) {
-                    arrayListWeek.add(dateFormat.format(weatherRequestCurrent));
-                    arrayListTemperature.add(getString(R.string.temperature, Math.round(weatherRequest.getList()[i].getMain().getTemp())));
-            }
-        }
-    }
-    private void setupRecyclerView() {
+    private void setupRecyclerView(InputDataContainer inputDataContainer) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false);
-        RecyclerDataAdapter adapter = new RecyclerDataAdapter(arrayListWeek, arrayListTemperature);
+        RecyclerDataAdapter adapter = new RecyclerDataAdapter(inputDataContainer.arrayListWeek, inputDataContainer.arrayListTemperature);
         listWeather.setLayoutManager(layoutManager);
         listWeather.setAdapter(adapter);
     }
