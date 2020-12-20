@@ -1,6 +1,7 @@
 package com.example.androidlevel2_lesson1.recycler;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ public class RecyclerDataAdapterTown extends RecyclerView.Adapter<RecyclerDataAd
     private IRVOnItemClick onItemClickCallback;
     private EducationSource educationSource;
     private Activity activity;
+    private ViewHolderTown viewHolderTown;
 
     public RecyclerDataAdapterTown(EducationSource educationSource, Activity activity, IRVOnItemClick onItemClickCallback) {
         this.educationSource = educationSource;
@@ -31,13 +33,15 @@ public class RecyclerDataAdapterTown extends RecyclerView.Adapter<RecyclerDataAd
     public ViewHolderTown onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent,
                 false);
-        return new ViewHolderTown(view);
+        viewHolderTown = new ViewHolderTown(view);
+        return viewHolderTown;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderTown holder, int position) {
         List<Town> towns = educationSource.getTowns();
         Town town = towns.get(position);
+        viewHolderTown = holder;
         holder.setTextToTextView(town.getTown());
         holder.setOnClickForItem(town.getTown());
     }
@@ -59,6 +63,10 @@ public class RecyclerDataAdapterTown extends RecyclerView.Adapter<RecyclerDataAd
         this.educationSource = educationSource;
     }
 
+    public void setSelectedTown() {
+        viewHolderTown.setColorItem(Color.WHITE);
+    }
+    
     class ViewHolderTown extends RecyclerView.ViewHolder {
         private TextView textView;
 
@@ -80,6 +88,10 @@ public class RecyclerDataAdapterTown extends RecyclerView.Adapter<RecyclerDataAd
                     }
                 }
             });
+        }
+
+        void setColorItem(int color) {
+            textView.setBackgroundColor(color);
         }
     }
 }

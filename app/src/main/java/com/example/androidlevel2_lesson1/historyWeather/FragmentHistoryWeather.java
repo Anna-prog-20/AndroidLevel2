@@ -59,7 +59,7 @@ public class FragmentHistoryWeather extends Fragment implements IRVOnItemClick {
     }
 
     public void clearFilter() {
-        educationSource.getHistoryWeathersNotSort();
+        educationSource.loadHistoryweathers();
         loadHistoryWeather();
     }
 

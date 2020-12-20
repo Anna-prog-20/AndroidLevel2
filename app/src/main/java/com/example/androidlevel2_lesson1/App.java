@@ -21,7 +21,6 @@ public class App extends Application {
 
     private EducationSource educationSource;
 
-    // Получаем объект приложения
     public static App getInstance() {
         return instance;
     }
@@ -30,16 +29,13 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        // Сохраняем объект приложения (для Singleton’а)
         instance = this;
 
-        // Строим базу
         db = EducationDatabase.createDB();
         educationSource = new EducationSource(getEducationDao());
 
     }
 
-    // Получаем EducationDao для составления запросов
     public EducationDao getEducationDao() {
         return db.getEducationDao();
     }

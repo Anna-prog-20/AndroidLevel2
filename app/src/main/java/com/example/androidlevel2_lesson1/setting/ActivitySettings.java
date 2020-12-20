@@ -53,17 +53,18 @@ public class ActivitySettings extends AppCompatActivity {
 
         savePreferences(MainActivity.sharedPreferences);
 
-        Intent intent;
-        currentData.setCheckPressure(pressure.isChecked());
-        currentData.setCheckWindSpeed(windSpeed.isChecked());
-        if(getResources().getConfiguration().orientation== Configuration.ORIENTATION_LANDSCAPE){
-            intent=new Intent(this, MainActivity.class);
-        }
-        else {
-            intent = new Intent(this, ActivityWeather.class);
-        }
-        intent.putExtra(dataKey,currentData);
-        startActivity(intent);
+//        Intent intent;
+////        currentData.setCheckPressure(pressure.isChecked());
+////        currentData.setCheckWindSpeed(windSpeed.isChecked());
+//        if(getResources().getConfiguration().orientation== Configuration.ORIENTATION_LANDSCAPE){
+//            intent = new Intent(this, MainActivity.class);
+//        }
+//        else {
+//            intent = new Intent(this, ActivityWeather.class);
+//        }
+//        intent.putExtra(dataKey,currentData);
+//        startActivity(intent);
+        super.onBackPressed();
     }
 
     @Override

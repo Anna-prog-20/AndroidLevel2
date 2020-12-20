@@ -22,6 +22,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.androidlevel2_lesson1.App;
 import com.example.androidlevel2_lesson1.data.DataContainer;
 import com.example.androidlevel2_lesson1.R;
 import com.example.androidlevel2_lesson1.data.OpenWeather;
@@ -85,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         sharedPreferences = getPreferences(MODE_PRIVATE);
         loadPreferences(sharedPreferences);
+
+        App.getInstance().getEducationSource().loadTowns();
     }
 
     @Override
@@ -95,12 +98,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         searchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
+            public boolean onQueryTextSubmit(final String query) {
                 FragmentManager fm = getSupportFragmentManager();
-                FragmentTown fragment = (FragmentTown) fm.findFragmentById(R.id.fragmentTownList);
+                final FragmentTown fragment = (FragmentTown) fm.findFragmentById(R.id.fragmentTownList);
                 if (fragment != null) {
                     fragment.setTownSelected(query);
                     fragment.validate(query);
+
+
                 }
                 return true;
             }
@@ -143,8 +148,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             case R.id.itemSetting: {
                 Intent intent = new Intent(this, ActivitySettings.class);
-                currentData=(DataContainer) Objects.requireNonNull(getIntent().getExtras()).getSerializable(FragmentWeather.dataKey);
-                intent.putExtra(FragmentWeather.dataKey,currentData);
+                if (currentData != null) {
+                    currentData = (DataContainer) Objects.requireNonNull(getIntent().getExtras()).getSerializable(FragmentWeather.dataKey);
+                    intent.putExtra(FragmentWeather.dataKey, currentData);
+                }
                 startActivity(intent);
                 return true;
             }
@@ -206,8 +213,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             case R.id.itemSetting: {
                 Intent intent = new Intent(this, ActivitySettings.class);
-                currentData=(DataContainer) Objects.requireNonNull(getIntent().getExtras()).getSerializable(FragmentWeather.dataKey);
-                intent.putExtra(FragmentWeather.dataKey,currentData);
+                if (currentData != null) {
+                    currentData = (DataContainer) Objects.requireNonNull(getIntent().getExtras()).getSerializable(FragmentWeather.dataKey);
+                    intent.putExtra(FragmentWeather.dataKey, currentData);
+                }
                 startActivity(intent);
                 break;
             }

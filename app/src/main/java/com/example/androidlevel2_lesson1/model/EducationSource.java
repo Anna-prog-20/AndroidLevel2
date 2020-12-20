@@ -1,5 +1,11 @@
 package com.example.androidlevel2_lesson1.model;
 
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
+import android.util.Log;
+
+import androidx.annotation.Nullable;
 import androidx.room.Delete;
 
 import java.util.List;
@@ -29,19 +35,34 @@ public class EducationSource {
     }
 
     public void getHistoryWeathersSortTown() {
-        historyWeathers = educationDao.getHistoryWeatherSortTown();
-    }
-
-    public void getHistoryWeathersNotSort() {
-        historyWeathers = educationDao.getHistoryWeatherNotSort();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                historyWeathers = educationDao.getHistoryWeatherSortTown();
+                Log.i("TAG", Thread.currentThread().getName());
+            }
+        }).start();
     }
 
     public void loadHistoryweathers() {
-        historyWeathers = educationDao.getAllHistorWeather();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                historyWeathers = educationDao.getAllHistorWeather();
+                Log.i("TAG", Thread.currentThread().getName());
+            }
+        }).start();
     }
 
     public void loadTowns() {
-        towns = educationDao.getAllTown();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                towns = educationDao.getAllTown();
+                Log.i("TAG", Thread.currentThread().getName());
+            }
+        }).start();
+
 }
 
     public long getCountHistoryWeather() {
@@ -49,67 +70,143 @@ public class EducationSource {
     }
 
     public long getCountTown() {
-
-        return educationDao.getCountTown();
+        final long[] count = {0};
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                count[0] = educationDao.getCountTown();
+            }
+        }).start();
+        return count[0];
     }
 
     /**
      * Функция добавления погоды в историю
      * @param historyWeather
      */
-    public void addHistoryWeather(HistoryWeather historyWeather) {
-        educationDao.insertHistoryWeather(historyWeather);
-        loadHistoryweathers();
+    public void addHistoryWeather(final HistoryWeather historyWeather) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                educationDao.insertHistoryWeather(historyWeather);
+                loadHistoryweathers();
+            }
+        }).start();
+
     }
 
-    public void addTown(Town town) {
-        educationDao.insertTown(town);
-        loadTowns();
+    public void addTown(final Town town) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                educationDao.insertTown(town);
+                loadTowns();
+            }
+        });
+        try {
+            thread.start();
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      *
      * @param historyWeather
      */
-    public void updateHistorWeather(HistoryWeather historyWeather) {
-        educationDao.updateHistoryWeather(historyWeather);
-        loadHistoryweathers();
+    public void updateHistorWeather(final HistoryWeather historyWeather) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                educationDao.updateHistoryWeather(historyWeather);
+                loadHistoryweathers();
+            }
+        }).start();
     }
 
-    public void updateTown(Town town) {
-        educationDao.updateTown(town);
-        loadTowns();
+    public void updateTown(final Town town) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                educationDao.updateTown(town);
+                loadTowns();
+            }
+        }).start();
     }
     /**
      *
      * @param id
      */
-    public void deleteHistorWeather(long id) {
-        educationDao.deleteHistoryWeatherById(id);
-        loadHistoryweathers();
+    public void deleteHistorWeather(final long id) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                educationDao.deleteHistoryWeatherById(id);
+                loadHistoryweathers();
+            }
+        }).start();
     }
 
     public void deleteAllHistorWeather() {
-        educationDao.deleteAllHistoryWeather();
-        loadHistoryweathers();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                educationDao.deleteAllHistoryWeather();
+                loadHistoryweathers();
+            }
+        }).start();
     }
 
-    public void getHistoryWeatherByTown(String town) {
-        historyWeathers = educationDao.getHistoryWeatherByTown(town);
+    public void getHistoryWeatherByTown(final String town) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                historyWeathers = educationDao.getHistoryWeatherByTown(town);
+            }
+        });
+        try {
+            thread.start();
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void deleteTown(long id) {
-        educationDao.deleteTownById(id);
-        loadTowns();
+    public void deleteTown(final long id) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                educationDao.deleteTownById(id);
+                loadTowns();
+            }
+        }).start();
     }
 
     public void deleteAllTown() {
-        educationDao.deleteAllTown();
-        loadTowns();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                educationDao.deleteAllTown();
+                loadTowns();
+            }
+        }).start();
     }
 
-    public void getTownByTown(String town) {
-        towns = educationDao.getTownByTown(town);
+    public void getTownByTown(final String town) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                towns = educationDao.getTownByTown(town);
+            }
+        });
+        try {
+            thread.start();
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

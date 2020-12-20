@@ -37,9 +37,17 @@ public class ActivityWeather extends AppCompatActivity {
             return;
         }
         if(savedInstanceState==null){
-            FragmentWeather details = new FragmentWeather();
+            final FragmentWeather details = new FragmentWeather();
             details.setArguments(getIntent().getExtras());
-            town= details.getDataCurrent().getTown();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (details.getDataCurrent().getTown() != null) {
+                        town = details.getDataCurrent().getTown();
+                    }
+                }
+            }).start();
+
         }
     }
 

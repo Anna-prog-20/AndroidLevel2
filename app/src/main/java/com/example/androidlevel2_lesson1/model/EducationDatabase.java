@@ -14,7 +14,6 @@ public abstract class EducationDatabase extends RoomDatabase {
 
     public static EducationDatabase createDB() {
         return Room.databaseBuilder(App.getInstance(), EducationDatabase.class, DB_NAME)
-                .allowMainThreadQueries()
                 .build();
     }
 }

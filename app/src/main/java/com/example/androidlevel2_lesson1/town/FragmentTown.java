@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +42,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Header;
 
 public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragmentDialogListener {
     private boolean isExistWeather=false;
@@ -56,6 +59,8 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
     private EducationSource educationSource;
 
     private Handler handler;
+    private HandlerThread handlerThread;
+    private Handler handlerLoad;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,6 +79,15 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
         setupRecyclerView(view);
         initDialog();
         initPreferences();
+//        handlerThread = new HandlerThread("LoadTown");
+//        handlerThread.start();
+//        Handler handlerLoad = new Handler(handlerThread.getLooper());
+//        handlerLoad.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                loadTown();
+//            }
+//        });
     }
 
     @Override
@@ -149,9 +163,12 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
         town=view.findViewById(R.id.listTown);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         town.setLayoutManager(layoutManager);
+        initTown();
+    }
 
+    private void initTown() {
         educationSource = App.getInstance().getEducationSource();
-        adapterTown = new RecyclerDataAdapterTown(educationSource, requireActivity(),this);
+        adapterTown = new RecyclerDataAdapterTown(educationSource, requireActivity(), this);
         town.setAdapter(adapterTown);
     }
 
@@ -161,19 +178,28 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
 
     public void validate(final String tv){
         value = firstUpperCase(tv);
-
         educationSource.getTownByTown("%"+value+"%");
+
         if (educationSource.getTowns().size()>0) {
-            adapterTown.setEducationSource(educationSource);
-            town.setAdapter(adapterTown);
+            loadTown();
         }
-        else {
-            connection();
-            educationSource.loadTowns();
-            adapterTown.setEducationSource(educationSource);
-            town.setAdapter(adapterTown);
-            dlgBuilder.show(requireActivity().getSupportFragmentManager(),"dialogBuilder");
-        }
+        else
+            {
+                clearFilter();
+                connection();
+                dlgBuilder.show(requireActivity().getSupportFragmentManager(),"dialogBuilder");
+            }
+
+    }
+
+    private void loadTown() {
+        adapterTown.setEducationSource(educationSource);
+        town.setAdapter(adapterTown);
+    }
+
+    public void clearFilter() {
+        educationSource.loadTowns();
+        loadTown();
     }
 
     private void addTown(final boolean connected, final String value) {
@@ -183,7 +209,16 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
                 if (connected) {
                     Town lineTown = new Town(firstUpperCase(value));
                     educationSource.addTown(lineTown);
-                    town.scrollToPosition((int) educationSource.getCountTown());
+                    int countTown = 0;
+                    if (educationSource.getTowns() != null) {
+                        countTown = educationSource.getTowns().size();
+                    }
+                    else {
+                        countTown = (int) educationSource.getCountTown();
+                    }
+
+                    town.scrollToPosition(countTown);
+                    //adapterTown.setSelectedTown();
                     Snackbar.make(requireView(), "Город успешно добавлен!", Snackbar.LENGTH_LONG).show();
                 }
                 else {

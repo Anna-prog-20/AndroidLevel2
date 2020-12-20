@@ -45,9 +45,6 @@ public interface EducationDao {
     @Query("SELECT * FROM historyweather WHERE temp = :temp")
     List<HistoryWeather> getHistoryWeatherByTemp(String temp);
 
-    @Query("SELECT * FROM historyweather ORDER BY id")
-    List<HistoryWeather> getHistoryWeatherNotSort();
-
     @Query("SELECT * FROM historyweather ORDER BY town")
     List<HistoryWeather> getHistoryWeatherSortTown();
 
