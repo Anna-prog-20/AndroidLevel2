@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,14 +24,17 @@ import com.example.androidlevel2_lesson1.data.DataContainer;
 import com.example.androidlevel2_lesson1.data.FragmentOfData;
 import com.example.androidlevel2_lesson1.data.InputDataContainer;
 import com.example.androidlevel2_lesson1.data.ProcessingData;
-import com.example.androidlevel2_lesson1.data.ServiceConnectionWeather;
-import com.example.androidlevel2_lesson1.data.ServiceConnectionWeather.ServiceBinder;
+import com.example.androidlevel2_lesson1.data.ServiceWeather;
+import com.example.androidlevel2_lesson1.data.ServiceWeather.ServiceBinder;
 import com.example.androidlevel2_lesson1.ThermometerView;
 import com.example.androidlevel2_lesson1.dialog.DialogBuilderFragment;
 import com.example.androidlevel2_lesson1.dialog.OnFragmentDialogListener;
 import com.example.androidlevel2_lesson1.R;
 import com.example.androidlevel2_lesson1.recycler.RecyclerDataAdapter;
+import com.example.androidlevel2_lesson1.town.FragmentTown;
+import com.example.androidlevel2_lesson1.town.MainActivity;
 
+import java.io.BufferedReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
@@ -54,38 +58,25 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
     private boolean isBound = false;
     private ServiceBinder boundService;
     private static Handler handler;
+
     // Обработка соединения с сервисом
     private ServiceConnection boundServiceConnection = new ServiceConnection() {
 
         // При соединении с сервисом
         @Override
         public void onServiceConnected(ComponentName name, final IBinder service) {
-            final boolean[] b = {false};
-            try {
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        boundService = (ServiceBinder) service;
-                        isBound = boundService != null;
-                    }
-                });
-                thread.start();
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            boundService = (ServiceBinder) service;
+            isBound = boundService != null;
+            assert boundService != null;
+            boolean connection = boundService.getConnection();
+            BufferedReader obtainedData = boundService.getObtainedData();
+            if (!connection) {
+                dlgBuilder.show(requireActivity().getSupportFragmentManager(), "dialogBuilder");
             }
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (!boundService.getConnection().getConnect()) {
-                        dlgBuilder.show(requireActivity().getSupportFragmentManager(),"dialogBuilder");
-                    }
-                    if (boundService.getConnection().getObtainedData() != null) {
-                        ProcessingData processingData = new ProcessingData(handler, (FragmentWeather) requireActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentMainWeather), boundService.getObtainedData());
-                        processingData.start();
-                    }
-                }
-            }).start();
+            else if (obtainedData != null) {
+                ProcessingData processingData = new ProcessingData(handler, (FragmentWeather) requireActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentMainWeather), obtainedData);
+                processingData.start();
+            }
         }
 
         // При разрыве соединения с сервисом
@@ -134,13 +125,17 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
         super.onStart();
     }
 
+    private void stopService() {
+        if (isBound){
+            requireActivity().unbindService(boundServiceConnection);
+            Log.i("TAG", "stopService");
+        }
+
+    }
     @Override
     public void onStop() {
         super.onStop();
-        if (isBound){
-            requireActivity().unbindService(boundServiceConnection);
-        }
-
+        stopService();
     }
 
     private boolean check(TextView textView){
@@ -149,6 +144,7 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+
        super.onCreate(savedInstanceState);
     }
 
@@ -163,22 +159,36 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
         initViews(view);
         initDialog();
         outputData();
-        try {
-            final URL uri = new URL(getString(R.string.weatherURL,town.getText(), "80efcfee52d4195b8ef83e2e5b69a707"));
-            handler = new Handler();
-            final Activity activity = requireActivity();
-            Intent intent = new Intent(requireActivity(), ServiceConnectionWeather.class);
-            intent.putExtra("uri", uri);
-            activity.startService(intent);
-            requireActivity().bindService(intent,
-                    boundServiceConnection,
-                    BIND_AUTO_CREATE);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        startServiceWeather();
         super.onViewCreated(view, savedInstanceState);
     }
 
+    private void startServiceWeather() {
+        try {
+            final URL uri = new URL(getString(R.string.weatherURL,currentData.getTown(), "80efcfee52d4195b8ef83e2e5b69a707"));
+            handler = new Handler();
+            final Activity activity = requireActivity();
+            final Intent intent = new Intent(requireActivity(), ServiceWeather.class);
+            intent.putExtra("uri", uri);
+            activity.startService(intent);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    requireActivity().bindService(intent,
+                            boundServiceConnection,
+                            BIND_AUTO_CREATE);
+                }
+            });
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
     private void initViews(View view) {
         currentData = getDataCurrent();

@@ -1,8 +1,14 @@
 package com.example.androidlevel2_lesson1.town;
 
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.androidlevel2_lesson1.data.DataContainer;
 import com.example.androidlevel2_lesson1.IRVOnItemClick;
 import com.example.androidlevel2_lesson1.R;
+import com.example.androidlevel2_lesson1.data.ProcessingData;
+import com.example.androidlevel2_lesson1.data.ServiceWeather;
 import com.example.androidlevel2_lesson1.dialog.DialogBuilderFragment;
 import com.example.androidlevel2_lesson1.dialog.OnFragmentDialogListener;
 import com.example.androidlevel2_lesson1.recycler.RecyclerDataAdapterTown;
@@ -34,21 +42,51 @@ import java.util.Arrays;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static android.content.Context.BIND_AUTO_CREATE;
+
 public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragmentDialogListener {
     private boolean isExistWeather=false;
     private DataContainer currentData;
     private RecyclerView town;
     private String townSelected;
-    private String searchText;
     private ArrayList<String> arrayListTown;
     static ArrayList<String> arrayList;
     private String value;
-    final boolean[] connected = {false};
+    private boolean connected = false;
     private DialogBuilderFragment dlgBuilder;
+    private boolean isBound = false;
+    private ServiceWeather.ServiceBinder boundService;
+    // Обработка соединения с сервисом
+    private ServiceConnection boundServiceConnection = new ServiceConnection() {
+
+        // При соединении с сервисом
+        @Override
+        public void onServiceConnected(ComponentName name, final IBinder service) {
+            boundService = (ServiceWeather.ServiceBinder) service;
+            isBound = boundService != null;
+            assert boundService != null;
+            connected = boundService.getConnection();
+
+        }
+
+        // При разрыве соединения с сервисом
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.i("TAG","ServiceConnection onServiceDisconnected");
+            isBound = false;
+            boundService = null;
+        }
+    };
+
+    public void setConnected(boolean connected) {
+        Log.i("TAG", "setConnected"+connected);
+        this.connected = connected;
+    }
 
     public void setTownSelected(String townSelected) {
         this.townSelected = townSelected;
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +138,18 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
         onClick(itemText);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopServuceWeather();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        stopServuceWeather();
+    }
+
     private DataContainer getCurrentData(String itemText){
         DataContainer currentDataI=new DataContainer(itemText);
         if (currentData!=null) {
@@ -135,8 +185,8 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
             }
         }
             else {
-                Intent intent=new Intent(getActivity(), ActivityWeather.class);
-                intent.putExtra(FragmentWeather.dataKey,currentData);
+                Intent intent = new Intent(getActivity(), ActivityWeather.class);
+                intent.putExtra(FragmentWeather.dataKey, currentData);
                 startActivity(intent);
             }
     }
@@ -152,39 +202,11 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
         dlgBuilder = new DialogBuilderFragment();
     }
 
-    private void checkTown() {
-    }
-
-    public void validate(final SearchView tv){
-        value = firstUpperCase(tv.getQuery().toString());
-        boolean check = searchToArray(arrayList, value);
-
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                connected[0] = connection();
-            }
-        });
-        thread.start();
-
-        if(check){
-            onClick(value);
-        } else {
-            dlgBuilder.show(requireActivity().getSupportFragmentManager(),"dialogBuilder");
-        }
-    }
-
     public void validate(final String tv){
         value = firstUpperCase(tv);
         boolean check = searchToArray(arrayList, value);
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                connected[0] = connection();
-            }
-        });
-        thread.start();
+        startServiceWeather(value);
 
         if(check){
             onClick(value);
@@ -225,32 +247,40 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
         return word.substring(0, 1).toUpperCase() + word.substring(1);
     }
 
-    private boolean connection(){
-        try {
-            URL uri = new URL(getString(R.string.weatherURL,townSelected, "80efcfee52d4195b8ef83e2e5b69a707"));
+    private void stopServuceWeather() {
+        if (isBound){
+            requireActivity().unbindService(boundServiceConnection);
+            Log.i("TAG", "MainActivity stopService");
+        }
+    }
 
-            HttpsURLConnection urlConnection = null;
-            try {
-                urlConnection = (HttpsURLConnection) uri.openConnection();
-                BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            } catch (Exception e) {
-                return false;
-            }
-            finally {
-                if (null != urlConnection) {
-                    urlConnection.disconnect();
+    private void startServiceWeather(String town) {
+        stopServuceWeather();
+        try {
+            final URL uri = new URL(getString(R.string.weatherURL,town, "80efcfee52d4195b8ef83e2e5b69a707"));
+            Handler handler = new Handler();
+            final Activity activity = requireActivity();
+            final Intent intent = new Intent(activity, ServiceWeather.class);
+            intent.putExtra("uri", uri);
+            activity.startService(intent);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    activity.bindService(intent,
+                            boundServiceConnection,
+                            BIND_AUTO_CREATE);
                 }
-            }
+            });
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        return true;
     }
 
     @Override
     public void onDialogResult(int id) {
         if (id == R.string.add) {
-            addTown(connected[0],value);
+            addTown(connected,value);
         }
     }
 }

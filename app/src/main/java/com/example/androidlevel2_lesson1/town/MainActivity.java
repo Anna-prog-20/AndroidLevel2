@@ -1,9 +1,16 @@
 package com.example.androidlevel2_lesson1.town;
 
 
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -19,6 +26,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.androidlevel2_lesson1.data.DataContainer;
 import com.example.androidlevel2_lesson1.R;
+import com.example.androidlevel2_lesson1.data.ServiceWeather;
 import com.example.androidlevel2_lesson1.dialog.BottomDialogFragment;
 import com.example.androidlevel2_lesson1.dialog.OnFragmentDialogListener;
 import com.example.androidlevel2_lesson1.historyWeather.ActivityHistoryWeather;
@@ -27,6 +35,8 @@ import com.example.androidlevel2_lesson1.setting.ActivitySettings;
 import com.example.androidlevel2_lesson1.weather.FragmentWeather;
 import com.google.android.material.navigation.NavigationView;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Objects;
 
 
@@ -73,12 +83,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         searchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
+            public boolean onQueryTextSubmit(final String query) {
                 FragmentManager fm = getSupportFragmentManager();
-                FragmentTown fragment = (FragmentTown) fm.findFragmentById(R.id.fragmentTownList);
+                final FragmentTown fragment = (FragmentTown) fm.findFragmentById(R.id.fragmentTownList);
                 if (fragment != null) {
                     fragment.setTownSelected(query);
-                    fragment.validate(searchText);
+                    fragment.validate(query);
                 }
                 return true;
             }
@@ -151,6 +161,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onRestoreInstanceState(@Nullable Bundle savedInstanceState) {
         assert savedInstanceState != null;
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     private Toolbar initToolbar() {

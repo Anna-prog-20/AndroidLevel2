@@ -12,7 +12,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 public class ThermometerView extends View {
-    private int thermometerColor = Color.GRAY;
+    private int thermometerColor = Color.WHITE;
     private int levelColor = Color.BLUE;
     private RectF levelRectangle = new RectF();
     private RectF headRectangle = new RectF();
@@ -63,7 +63,7 @@ public class ThermometerView extends View {
     private void initAttr(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ThermometerView, 0, 0);
 
-        thermometerColor = typedArray.getColor(R.styleable.ThermometerView_thermometer_color, Color.GRAY);
+        thermometerColor = typedArray.getColor(R.styleable.ThermometerView_thermometer_color, Color.WHITE);
         levelColor = typedArray.getColor(R.styleable.ThermometerView_level_color, Color.BLUE);
         level = typedArray.getInteger(R.styleable.ThermometerView_level, 40);
         typedArray.recycle();

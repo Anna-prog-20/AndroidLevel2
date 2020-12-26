@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service
-            android:name=".data.ServiceConnectionWeather"
+            android:name=".data.ServiceWeather"
             android:enabled="true"
             android:exported="true" />
 
