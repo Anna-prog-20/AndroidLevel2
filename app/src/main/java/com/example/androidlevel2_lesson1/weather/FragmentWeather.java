@@ -1,13 +1,7 @@
 package com.example.androidlevel2_lesson1.weather;
 
-import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,42 +15,31 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.androidlevel2_lesson1.App;
 import com.example.androidlevel2_lesson1.BuildConfig;
 import com.example.androidlevel2_lesson1.data.DataContainer;
 import com.example.androidlevel2_lesson1.data.FragmentOfData;
 import com.example.androidlevel2_lesson1.data.InputDataContainer;
 import com.example.androidlevel2_lesson1.data.OpenWeather;
-import com.example.androidlevel2_lesson1.data.ProcessingData;
 import com.example.androidlevel2_lesson1.data.PutData;
-import com.example.androidlevel2_lesson1.data.ServiceConnectionWeather;
-import com.example.androidlevel2_lesson1.data.ServiceConnectionWeather.ServiceBinder;
 import com.example.androidlevel2_lesson1.ThermometerView;
 import com.example.androidlevel2_lesson1.dialog.DialogBuilderFragment;
 import com.example.androidlevel2_lesson1.dialog.OnFragmentDialogListener;
 import com.example.androidlevel2_lesson1.R;
-import com.example.androidlevel2_lesson1.model.WeatherList;
 import com.example.androidlevel2_lesson1.model.WeatherRequest;
-import com.example.androidlevel2_lesson1.recycler.RecyclerDataAdapter;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.picasso.Picasso;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static android.content.Context.BIND_AUTO_CREATE;
-import static android.content.Context.MODE_PRIVATE;
 
 public class FragmentWeather extends Fragment implements OnFragmentDialogListener, FragmentOfData {
     public static final String dataKey = "dataKey";
@@ -160,17 +143,11 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
         apiKey = BuildConfig.WEATHER_API_KEY;
     }
 
-    private Gson gson() {
-        return new GsonBuilder().setFieldNamingStrategy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .excludeFieldsWithoutExposeAnnotation().create();
-    }
-
     private void initRetorfit() {
         Retrofit retrofit;
-
         retrofit = new Retrofit.Builder()
                 .baseUrl(getString(R.string.webService))
-                .addConverterFactory(GsonConverterFactory.create(gson()))
+                .addConverterFactory(GsonConverterFactory.create(App.getInstance().gson()))
                 .build();
 
         openWeather = retrofit.create(OpenWeather.class);
@@ -181,8 +158,7 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
             @Override
             public void onResponse(Call<WeatherRequest> call, Response<WeatherRequest> response) {
                 if (response.body() != null) {
-                    PutData putData = new PutData(handler, (FragmentWeather) requireActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentMainWeather), response.body());
-                    putData.start();
+                    handler.post(new PutData((FragmentWeather) requireActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentMainWeather), response.body()));
                 }
                 else {
                     dlgBuilder.show(requireActivity().getSupportFragmentManager(),"dialogBuilder");
@@ -191,7 +167,7 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
 
             @Override
             public void onFailure(Call<WeatherRequest> call, Throwable t) {
-                Log.i("TAG", "Ошибка");
+                Log.i("TAG", String.valueOf(t));
             }
         });
     }

@@ -19,7 +19,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public class ProcessingData extends Thread implements Runnable{
+//Не использую
+public class ProcessingData extends Thread{
     private InputDataContainer inputDataContainer;
     private int t=0;
     private Handler handler;

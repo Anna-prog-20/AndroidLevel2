@@ -20,16 +20,14 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public class PutData extends Thread implements Runnable{
+public class PutData implements Runnable {
     private InputDataContainer inputDataContainer;
     private int t=0;
 
-    private Handler handler;
     private FragmentOfData fragmentOfData;
     private WeatherRequest weatherRequest;
 
-    public PutData(Handler handler, FragmentOfData fragmentOfData, WeatherRequest weatherRequest) {
-        this.handler = handler;
+    public PutData(FragmentOfData fragmentOfData, WeatherRequest weatherRequest) {
         this.fragmentOfData = fragmentOfData;
         this.weatherRequest = weatherRequest;
         inputDataContainer = new InputDataContainer();
@@ -37,17 +35,11 @@ public class PutData extends Thread implements Runnable{
 
     @Override
     public void run() {
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    fragmentOfData.displayWeather(writeWeather(weatherRequest));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        try {
+            fragmentOfData.displayWeather(writeWeather(weatherRequest));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         Log.i("TAG", "PutData");
     }
 

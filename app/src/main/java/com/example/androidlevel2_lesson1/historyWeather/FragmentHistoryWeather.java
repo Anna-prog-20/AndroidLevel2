@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.androidlevel2_lesson1.IRVOnItemClick;
 import com.example.androidlevel2_lesson1.R;
-import com.example.androidlevel2_lesson1.recycler.RecyclerDataAdapterTown;
+import com.example.androidlevel2_lesson1.town.RecyclerDataAdapterTown;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
