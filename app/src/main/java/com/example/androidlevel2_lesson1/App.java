@@ -1,13 +1,10 @@
 package com.example.androidlevel2_lesson1;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 
-import androidx.room.Room;
-
-import com.example.androidlevel2_lesson1.model.EducationDao;
-import com.example.androidlevel2_lesson1.model.EducationDatabase;
-import com.example.androidlevel2_lesson1.model.EducationSource;
+import com.example.androidlevel2_lesson1.model.db.WeatherDao;
+import com.example.androidlevel2_lesson1.model.db.WeatherDatabase;
+import com.example.androidlevel2_lesson1.model.db.WeatherSource;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -17,9 +14,9 @@ public class App extends Application {
     private static App instance;
 
     // База данных
-    private EducationDatabase db;
+    private WeatherDatabase db;
 
-    private EducationSource educationSource;
+    private WeatherSource weatherSource;
 
     public static App getInstance() {
         return instance;
@@ -31,17 +28,17 @@ public class App extends Application {
 
         instance = this;
 
-        db = EducationDatabase.createDB();
-        educationSource = new EducationSource(getEducationDao());
+        db = WeatherDatabase.createDB();
+        weatherSource = new WeatherSource(getEducationDao());
 
     }
 
-    public EducationDao getEducationDao() {
+    public WeatherDao getEducationDao() {
         return db.getEducationDao();
     }
 
-    public EducationSource getEducationSource() {
-        return educationSource;
+    public WeatherSource getWeatherSource() {
+        return weatherSource;
     }
 
     public Gson gson() {

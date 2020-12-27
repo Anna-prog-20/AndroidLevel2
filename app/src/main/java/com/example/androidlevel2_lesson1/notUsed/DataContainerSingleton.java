@@ -1,4 +1,4 @@
-package com.example.androidlevel2_lesson1.data;
+package com.example.androidlevel2_lesson1.notUsed;
 
 import java.io.Serializable;
 

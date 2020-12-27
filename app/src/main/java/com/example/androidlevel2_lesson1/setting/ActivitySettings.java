@@ -2,7 +2,6 @@ package com.example.androidlevel2_lesson1.setting;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,11 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.androidlevel2_lesson1.data.DataContainer;
+import com.example.androidlevel2_lesson1.model.dataTransfer.DataContainer;
 import com.example.androidlevel2_lesson1.historyWeather.ActivityHistoryWeather;
 import com.example.androidlevel2_lesson1.town.MainActivity;
 import com.example.androidlevel2_lesson1.R;
-import com.example.androidlevel2_lesson1.weather.ActivityWeather;
 
 import static com.example.androidlevel2_lesson1.weather.FragmentWeather.dataKey;
 

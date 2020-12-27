@@ -1,4 +1,4 @@
-package com.example.androidlevel2_lesson1.recycler;
+package com.example.androidlevel2_lesson1.weather;
 
 import android.view.LayoutInflater;
 import android.view.View;

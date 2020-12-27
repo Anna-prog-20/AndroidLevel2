@@ -1,16 +1,12 @@
 package com.example.androidlevel2_lesson1.town;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.ShareActionProvider;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,28 +19,17 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.androidlevel2_lesson1.App;
-import com.example.androidlevel2_lesson1.data.DataContainer;
+import com.example.androidlevel2_lesson1.model.dataTransfer.DataContainer;
 import com.example.androidlevel2_lesson1.R;
-import com.example.androidlevel2_lesson1.data.OpenWeather;
 import com.example.androidlevel2_lesson1.dialog.BottomDialogFragment;
 import com.example.androidlevel2_lesson1.dialog.OnFragmentDialogListener;
 import com.example.androidlevel2_lesson1.historyWeather.ActivityHistoryWeather;
 import com.example.androidlevel2_lesson1.info.ActivityInfo;
-import com.example.androidlevel2_lesson1.model.WeatherList;
 import com.example.androidlevel2_lesson1.setting.ActivitySettings;
 import com.example.androidlevel2_lesson1.weather.FragmentWeather;
 import com.google.android.material.navigation.NavigationView;
-import com.squareup.picasso.Picasso;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -87,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sharedPreferences = getPreferences(MODE_PRIVATE);
         loadPreferences(sharedPreferences);
 
-        App.getInstance().getEducationSource().loadTowns();
+        App.getInstance().getWeatherSource().loadTowns();
     }
 
     @Override
@@ -240,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onDestroy() {
+
         super.onDestroy();
     }
 
@@ -250,11 +236,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void loadPreferences(SharedPreferences sharedPref){
         String keyTown = "town";
-        String keyCheckPressure = ActivitySettings.KEYS[0];
-        String keyCheckWindSpeed = ActivitySettings.KEYS[1];
         String town = sharedPref.getString(keyTown,"Чита");
-        boolean checkPressure = sharedPref.getBoolean(keyCheckPressure,true);
-        boolean checkWindSpeed = sharedPref.getBoolean(keyCheckWindSpeed,true);
 
         showStartWeather(town);
     }

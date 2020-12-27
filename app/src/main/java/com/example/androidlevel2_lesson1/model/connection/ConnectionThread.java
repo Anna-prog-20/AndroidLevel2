@@ -1,33 +1,25 @@
-package com.example.androidlevel2_lesson1.data;
-
-import android.os.Handler;
-import android.util.Log;
-
-import androidx.fragment.app.FragmentManager;
+package com.example.androidlevel2_lesson1.model.connection;
 
 import com.example.androidlevel2_lesson1.dialog.DialogBuilderFragment;
-import com.example.androidlevel2_lesson1.model.WeatherRequest;
-import com.example.androidlevel2_lesson1.weather.FragmentWeather;
-import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.text.ParseException;
-import java.util.stream.Collectors;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class Connection extends Thread implements Runnable{
+public class ConnectionThread extends Thread{
+
     private URL uri;
     private DialogBuilderFragment dlgBuilder;
 
     private HttpsURLConnection urlConnection = null;
-    private boolean connect = false;
-    private BufferedReader obtainedData = null;
+    private volatile boolean connect = false;
+    private volatile BufferedReader obtainedData = null;
 
-    public Connection(URL uri) {
+    public ConnectionThread(URL uri) {
         this.uri = uri;
         initDialog();
     }
@@ -37,26 +29,38 @@ public class Connection extends Thread implements Runnable{
         dlgBuilder.setVisibleAddButton(false);
     }
 
+    public URL getUri() {
+        return uri;
+    }
+
+    public void setUri(URL uri) {
+        this.uri = uri;
+    }
+
     @Override
     public void run() {
         try {
             urlConnection = (HttpsURLConnection) uri.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setReadTimeout(10000);
-
-            if (urlConnection.getInputStream() != null) {
-                obtainedData = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                connect = true;
-            }
-            else {
-                connect = false;
-            }
+            getData();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void stopConnection() {
+    public synchronized void getData() throws Exception {
+        InputStream inputStream = urlConnection.getInputStream();
+        if (inputStream != null) {
+            obtainedData = new BufferedReader(new InputStreamReader(inputStream));
+            connect = true;
+        }
+        else {
+            connect = false;
+        }
+    }
+
+    public synchronized void stopConnection() {
         if (null != urlConnection) {
             urlConnection.disconnect();
             try {
@@ -66,11 +70,12 @@ public class Connection extends Thread implements Runnable{
             }
         }
     }
-    public boolean getConnect() {
+    public synchronized boolean getConnect() {
         return connect;
     }
 
-    public BufferedReader getObtainedData() {
+    public synchronized BufferedReader getObtainedData() {
         return obtainedData;
     }
 }
+

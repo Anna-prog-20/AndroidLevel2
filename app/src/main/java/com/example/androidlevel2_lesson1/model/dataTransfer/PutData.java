@@ -1,38 +1,30 @@
-package com.example.androidlevel2_lesson1.data;
+package com.example.androidlevel2_lesson1.model.dataTransfer;
 
 import android.annotation.SuppressLint;
-import android.os.Handler;
 import android.util.Log;
 
 import androidx.fragment.app.Fragment;
 
-import com.example.androidlevel2_lesson1.App;
 import com.example.androidlevel2_lesson1.R;
-import com.example.androidlevel2_lesson1.model.HistoryWeather;
-import com.example.androidlevel2_lesson1.model.WeatherList;
 import com.example.androidlevel2_lesson1.model.WeatherRequest;
-import com.example.androidlevel2_lesson1.weather.FragmentWeather;
-import com.google.gson.Gson;
+import com.example.androidlevel2_lesson1.model.dataTransfer.FragmentOfData;
+import com.example.androidlevel2_lesson1.model.dataTransfer.InputDataContainer;
 
-import java.io.BufferedReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
-public class PutData extends Thread implements Runnable{
+public class PutData implements Runnable{
     private InputDataContainer inputDataContainer;
     private int t=0;
 
-    private Handler handler;
     private FragmentOfData fragmentOfData;
     private WeatherRequest weatherRequest;
 
-    public PutData(Handler handler, FragmentOfData fragmentOfData, WeatherRequest weatherRequest) {
-        this.handler = handler;
+    public PutData(FragmentOfData fragmentOfData, WeatherRequest weatherRequest) {
         this.fragmentOfData = fragmentOfData;
         this.weatherRequest = weatherRequest;
         inputDataContainer = new InputDataContainer();
@@ -40,20 +32,11 @@ public class PutData extends Thread implements Runnable{
 
     @Override
     public void run() {
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    fragmentOfData.displayWeather(writeWeather(weatherRequest));
-                    HistoryWeather historyWeather = new HistoryWeather(((FragmentWeather) fragmentOfData).getTown().getText().toString(),inputDataContainer.date,inputDataContainer.temperature);
-                    App.getInstance().getEducationSource().addHistoryWeather(historyWeather);
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        try {
+            fragmentOfData.displayWeather(writeWeather(weatherRequest));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         Log.i("TAG", "PutData");
     }
 

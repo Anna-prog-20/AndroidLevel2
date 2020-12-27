@@ -1,22 +1,18 @@
 package com.example.androidlevel2_lesson1.historyWeather;
 
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
-import com.example.androidlevel2_lesson1.data.DataContainer;
 import com.example.androidlevel2_lesson1.R;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.textfield.TextInputLayout;
 
 public class ActivityHistoryWeather extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 

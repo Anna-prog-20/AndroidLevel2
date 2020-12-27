@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.androidlevel2_lesson1.historyWeather.ActivityHistoryWeather;
 import com.example.androidlevel2_lesson1.setting.ActivitySettings;
-import com.example.androidlevel2_lesson1.data.DataContainer;
+import com.example.androidlevel2_lesson1.model.dataTransfer.DataContainer;
 import com.example.androidlevel2_lesson1.town.MainActivity;
 import com.example.androidlevel2_lesson1.R;
 import com.example.androidlevel2_lesson1.info.ActivityInfo;

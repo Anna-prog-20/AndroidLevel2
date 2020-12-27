@@ -1,4 +1,4 @@
-package com.example.androidlevel2_lesson1.data;
+package com.example.androidlevel2_lesson1.notUsed;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
@@ -7,6 +7,8 @@ import android.util.Log;
 import androidx.fragment.app.Fragment;
 
 import com.example.androidlevel2_lesson1.R;
+import com.example.androidlevel2_lesson1.model.dataTransfer.FragmentOfData;
+import com.example.androidlevel2_lesson1.model.dataTransfer.InputDataContainer;
 import com.example.androidlevel2_lesson1.model.WeatherRequest;
 import com.google.gson.Gson;
 
@@ -19,7 +21,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public class ProcessingData extends Thread implements Runnable{
+public class ProcessingData extends Thread{
     private InputDataContainer inputDataContainer;
     private int t=0;
     private Handler handler;

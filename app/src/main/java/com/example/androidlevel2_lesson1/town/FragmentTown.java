@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,29 +19,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.androidlevel2_lesson1.App;
 import com.example.androidlevel2_lesson1.BuildConfig;
-import com.example.androidlevel2_lesson1.data.DataContainer;
-import com.example.androidlevel2_lesson1.recycler.IRVOnItemClick;
+import com.example.androidlevel2_lesson1.model.dataTransfer.DataContainer;
+import com.example.androidlevel2_lesson1.IRVOnItemClick;
 import com.example.androidlevel2_lesson1.R;
-import com.example.androidlevel2_lesson1.data.OpenWeather;
+import com.example.androidlevel2_lesson1.model.connection.OpenWeather;
 import com.example.androidlevel2_lesson1.dialog.DialogBuilderFragment;
 import com.example.androidlevel2_lesson1.dialog.OnFragmentDialogListener;
-import com.example.androidlevel2_lesson1.model.EducationSource;
-import com.example.androidlevel2_lesson1.model.Town;
+import com.example.androidlevel2_lesson1.model.db.WeatherSource;
+import com.example.androidlevel2_lesson1.model.db.Town;
 import com.example.androidlevel2_lesson1.model.WeatherRequest;
-import com.example.androidlevel2_lesson1.recycler.RecyclerDataAdapterTown;
 import com.example.androidlevel2_lesson1.weather.ActivityWeather;
 import com.example.androidlevel2_lesson1.weather.FragmentWeather;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Header;
 
 public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragmentDialogListener {
     private boolean isExistWeather=false;
@@ -56,11 +50,9 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
     private String apiKey;
 
     private RecyclerDataAdapterTown adapterTown;
-    private EducationSource educationSource;
+    private WeatherSource weatherSource;
 
     private Handler handler;
-    private HandlerThread handlerThread;
-    private Handler handlerLoad;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,6 +62,7 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        handler = new Handler();
         return inflater.inflate(R.layout.fragment_town,container,false);
     }
 
@@ -79,15 +72,6 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
         setupRecyclerView(view);
         initDialog();
         initPreferences();
-//        handlerThread = new HandlerThread("LoadTown");
-//        handlerThread.start();
-//        Handler handlerLoad = new Handler(handlerThread.getLooper());
-//        handlerLoad.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                loadTown();
-//            }
-//        });
     }
 
     @Override
@@ -167,8 +151,8 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
     }
 
     private void initTown() {
-        educationSource = App.getInstance().getEducationSource();
-        adapterTown = new RecyclerDataAdapterTown(educationSource, requireActivity(), this);
+        weatherSource = App.getInstance().getWeatherSource();
+        adapterTown = new RecyclerDataAdapterTown(weatherSource, requireActivity(), this);
         town.setAdapter(adapterTown);
     }
 
@@ -178,54 +162,54 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
 
     public void validate(final String tv){
         value = firstUpperCase(tv);
-        educationSource.getTownByTown("%"+value+"%");
 
-        if (educationSource.getTowns().size()>0) {
-            loadTown();
-        }
-        else
-            {
-                clearFilter();
-                connection();
-                dlgBuilder.show(requireActivity().getSupportFragmentManager(),"dialogBuilder");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (weatherSource.getTownByTown("%"+value+"%").size() > 0) {
+                    loadTown();
+                } else {
+                    connection();
+                    clearFilter();
+                    dlgBuilder.show(requireActivity().getSupportFragmentManager(),"dialogBuilder");
+                }
             }
-
+        }).start();
     }
 
     private void loadTown() {
-        adapterTown.setEducationSource(educationSource);
-        town.setAdapter(adapterTown);
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                adapterTown.setWeatherSource(weatherSource);
+                town.setAdapter(adapterTown);
+            }
+        });
+
     }
 
     public void clearFilter() {
-        educationSource.loadTowns();
+        weatherSource.loadTowns();
         loadTown();
     }
 
     private void addTown(final boolean connected, final String value) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (connected) {
-                    Town lineTown = new Town(firstUpperCase(value));
-                    educationSource.addTown(lineTown);
-                    int countTown = 0;
-                    if (educationSource.getTowns() != null) {
-                        countTown = educationSource.getTowns().size();
-                    }
-                    else {
-                        countTown = (int) educationSource.getCountTown();
-                    }
-
-                    town.scrollToPosition(countTown);
-                    //adapterTown.setSelectedTown();
-                    Snackbar.make(requireView(), "Город успешно добавлен!", Snackbar.LENGTH_LONG).show();
-                }
-                else {
-                    Snackbar.make(requireView(), "Такого города не существует!", Snackbar.LENGTH_LONG).show();
-                }
+        if (connected) {
+            Town lineTown = new Town(firstUpperCase(value));
+            weatherSource.addTown(lineTown);
+            int countTown = 0;
+            if (weatherSource.getTowns() != null) {
+                countTown = weatherSource.getTowns().size();
             }
-        });
+            else {
+                countTown = (int) weatherSource.getCountTown();
+            }
+            town.scrollToPosition(countTown);
+            Snackbar.make(requireView(), "Город успешно добавлен!", Snackbar.LENGTH_LONG).show();
+        }
+        else {
+            Snackbar.make(requireView(), "Такого города не существует!", Snackbar.LENGTH_LONG).show();
+        }
     }
 
     public String firstUpperCase(String word){
@@ -235,10 +219,11 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
 
     private void connection(){
         initRetorfit();
-        requestRetrofit(townSelected,apiKey);
+        requestRetrofit(townSelected, apiKey);
     }
 
     private void initPreferences() {
+
         apiKey = BuildConfig.WEATHER_API_KEY;
     }
     
@@ -267,7 +252,7 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
 
             @Override
             public void onFailure(Call<WeatherRequest> call, Throwable t) {
-
+                Log.i("TAG", String.valueOf(t));
             }
         });
     }

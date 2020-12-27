@@ -1,4 +1,4 @@
-package com.example.androidlevel2_lesson1.recycler;
+package com.example.androidlevel2_lesson1.historyWeather;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -10,8 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.androidlevel2_lesson1.R;
-import com.example.androidlevel2_lesson1.model.EducationSource;
-import com.example.androidlevel2_lesson1.model.HistoryWeather;
+import com.example.androidlevel2_lesson1.model.db.WeatherSource;
+import com.example.androidlevel2_lesson1.model.db.HistoryWeather;
+import com.example.androidlevel2_lesson1.IRVOnItemClick;
 
 import java.util.List;
 
@@ -20,10 +21,10 @@ public class RecyclerDataAdapterHistoryWeather extends RecyclerView.Adapter<Recy
     private Activity activity;
     private IRVOnItemClick onItemClickCallback;
 
-    private EducationSource educationSource;
+    private WeatherSource weatherSource;
 
-    public RecyclerDataAdapterHistoryWeather(EducationSource educationSource, Activity activity, IRVOnItemClick onItemClickCallback) {
-        this.educationSource = educationSource;
+    public RecyclerDataAdapterHistoryWeather(WeatherSource weatherSource, Activity activity, IRVOnItemClick onItemClickCallback) {
+        this.weatherSource = weatherSource;
         this.activity = activity;
         this.onItemClickCallback = onItemClickCallback;
     }
@@ -41,7 +42,7 @@ public class RecyclerDataAdapterHistoryWeather extends RecyclerView.Adapter<Recy
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderHistoryWeather holder, int position) {
-        List<HistoryWeather> historyWeathers = educationSource.getHistoryWeathers();
+        List<HistoryWeather> historyWeathers = weatherSource.getHistoryWeathers();
         HistoryWeather historyWeather = historyWeathers.get(position);
         holder.setTextToTextViews(historyWeather.getTown(),historyWeather.getDate(),historyWeather.getTemp());
         holder.setOnClickForItem(historyWeather.getTown());
@@ -49,15 +50,18 @@ public class RecyclerDataAdapterHistoryWeather extends RecyclerView.Adapter<Recy
 
     @Override
     public int getItemCount() {
-        return educationSource.getHistoryWeathers().size();
+        int result = 0;
+        if (weatherSource.getHistoryWeathers() != null)
+            result = weatherSource.getHistoryWeathers().size();
+        return result;
     }
 
-    public EducationSource getEducationSource() {
-        return educationSource;
+    public WeatherSource getWeatherSource() {
+        return weatherSource;
     }
 
-    public void setEducationSource(EducationSource educationSource) {
-        this.educationSource = educationSource;
+    public void setWeatherSource(WeatherSource weatherSource) {
+        this.weatherSource = weatherSource;
     }
 
     class ViewHolderHistoryWeather extends RecyclerView.ViewHolder {

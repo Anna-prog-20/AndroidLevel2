@@ -1,13 +1,8 @@
 package com.example.androidlevel2_lesson1.weather;
 
-import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,44 +18,29 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.androidlevel2_lesson1.App;
 import com.example.androidlevel2_lesson1.BuildConfig;
-import com.example.androidlevel2_lesson1.data.DataContainer;
-import com.example.androidlevel2_lesson1.data.FragmentOfData;
-import com.example.androidlevel2_lesson1.data.InputDataContainer;
-import com.example.androidlevel2_lesson1.data.OpenWeather;
-import com.example.androidlevel2_lesson1.data.ProcessingData;
-import com.example.androidlevel2_lesson1.data.PutData;
-import com.example.androidlevel2_lesson1.data.ServiceConnectionWeather;
-import com.example.androidlevel2_lesson1.data.ServiceConnectionWeather.ServiceBinder;
+import com.example.androidlevel2_lesson1.model.dataTransfer.DataContainer;
+import com.example.androidlevel2_lesson1.model.dataTransfer.FragmentOfData;
+import com.example.androidlevel2_lesson1.model.dataTransfer.InputDataContainer;
+import com.example.androidlevel2_lesson1.model.connection.OpenWeather;
+import com.example.androidlevel2_lesson1.model.dataTransfer.PutData;
 import com.example.androidlevel2_lesson1.ThermometerView;
 import com.example.androidlevel2_lesson1.dialog.DialogBuilderFragment;
 import com.example.androidlevel2_lesson1.dialog.OnFragmentDialogListener;
 import com.example.androidlevel2_lesson1.R;
-import com.example.androidlevel2_lesson1.model.HistoryWeather;
-import com.example.androidlevel2_lesson1.model.WeatherList;
+import com.example.androidlevel2_lesson1.model.db.HistoryWeather;
 import com.example.androidlevel2_lesson1.model.WeatherRequest;
-import com.example.androidlevel2_lesson1.recycler.RecyclerDataAdapter;
 import com.example.androidlevel2_lesson1.setting.ActivitySettings;
 import com.example.androidlevel2_lesson1.town.MainActivity;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.squareup.picasso.Picasso;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static android.content.Context.BIND_AUTO_CREATE;
-import static android.content.Context.MODE_PRIVATE;
 
 public class FragmentWeather extends Fragment implements OnFragmentDialogListener, FragmentOfData {
     public static final String dataKey = "dataKey";
@@ -140,10 +120,21 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Log.i("TAG", "onResume");
+        if (MainActivity.sharedPreferences!=null) {
+            loadPreferences(MainActivity.sharedPreferences);
+        }
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         initViews(view);
-
-        loadPreferences(MainActivity.sharedPreferences);
+        Log.i("TAG", "onViewCreated");
+        if (MainActivity.sharedPreferences!=null) {
+            loadPreferences(MainActivity.sharedPreferences);
+        }
 
         initArrayImageId();
         initDialog();
@@ -170,7 +161,6 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
 
     private void initRetorfit() {
         Retrofit retrofit;
-
         retrofit = new Retrofit.Builder()
                 .baseUrl(getString(R.string.webService))
                 .addConverterFactory(GsonConverterFactory.create(App.getInstance().gson()))
@@ -184,8 +174,7 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
             @Override
             public void onResponse(Call<WeatherRequest> call, Response<WeatherRequest> response) {
                 if (response.body() != null) {
-                    PutData putData = new PutData(handler, (FragmentWeather) requireActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentMainWeather), response.body());
-                    putData.start();
+                    handler.post(new PutData((FragmentWeather) requireActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentMainWeather), response.body()));
                     savePreferences(MainActivity.sharedPreferences);
                     Log.i("TAG","onStart");
                 }
@@ -196,9 +185,10 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
 
             @Override
             public void onFailure(Call<WeatherRequest> call, Throwable t) {
-                Log.i("TAG", "Ошибка");
+                Log.i("TAG", String.valueOf(t));
             }
         });
+
     }
 
     private void initArrayImageId() {
@@ -285,6 +275,10 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
         thermometerView = getView().findViewById(R.id.thermometerView);
         thermometerView.setLevel(inputDataContainer.levelThermometer);
         thermometerView.invalidate();
+
+        HistoryWeather historyWeather = new HistoryWeather(town.getText().toString(),inputDataContainer.date,inputDataContainer.temperature);
+        App.getInstance().getWeatherSource().addHistoryWeather(historyWeather);
+        Log.i("TAG", "displayWeather");
     }
 
     private void setupRecyclerView(InputDataContainer inputDataContainer) {
@@ -314,7 +308,7 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
         String keyCheckWindSpeed = ActivitySettings.KEYS[1];
         boolean checkPressure = sharedPref.getBoolean(keyCheckPressure,true);
         boolean checkWindSpeed = sharedPref.getBoolean(keyCheckWindSpeed,true);
-
+        //Log.i("TAG", "loadPreferences-weather");
         visible(windSpeed,checkWindSpeed);
         visible(pressure,checkPressure);
     }

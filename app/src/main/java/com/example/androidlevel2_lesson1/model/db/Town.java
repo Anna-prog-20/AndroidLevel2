@@ -1,4 +1,4 @@
-package com.example.androidlevel2_lesson1.model;
+package com.example.androidlevel2_lesson1.model.db;
 
 import androidx.room.Entity;
 import androidx.room.Index;

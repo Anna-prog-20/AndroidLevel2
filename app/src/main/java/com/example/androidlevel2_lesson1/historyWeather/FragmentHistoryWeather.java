@@ -1,6 +1,9 @@
 package com.example.androidlevel2_lesson1.historyWeather;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,21 +16,25 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.androidlevel2_lesson1.App;
-import com.example.androidlevel2_lesson1.recycler.IRVOnItemClick;
+import com.example.androidlevel2_lesson1.IRVOnItemClick;
 import com.example.androidlevel2_lesson1.R;
-import com.example.androidlevel2_lesson1.model.EducationSource;
-import com.example.androidlevel2_lesson1.recycler.RecyclerDataAdapterHistoryWeather;
+import com.example.androidlevel2_lesson1.model.db.HistoryWeather;
+import com.example.androidlevel2_lesson1.model.db.WeatherSource;
 import com.google.android.material.snackbar.Snackbar;
+
+import java.util.List;
 
 public class FragmentHistoryWeather extends Fragment implements IRVOnItemClick {
     private RecyclerView historyWeather;
     private String townSelected;
     private RecyclerDataAdapterHistoryWeather adapterHistoryWeather;
-    private EducationSource educationSource;
+    private WeatherSource weatherSource;
+    private Handler handler;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        handler = new Handler();
         return inflater.inflate(R.layout.fragment_history_weather,container,false);
     }
 
@@ -39,7 +46,7 @@ public class FragmentHistoryWeather extends Fragment implements IRVOnItemClick {
 
     @Override
     public void onItemClicked(String itemText) {
-        educationSource.getHistoryWeathersSortTown();
+        weatherSource.getHistoryWeathersSortTown();
         loadHistoryWeather();
     }
 
@@ -49,35 +56,44 @@ public class FragmentHistoryWeather extends Fragment implements IRVOnItemClick {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         historyWeather.setLayoutManager(layoutManager);
 
-        educationSource = App.getInstance().getEducationSource();
-        adapterHistoryWeather = new RecyclerDataAdapterHistoryWeather(educationSource, requireActivity(),this);
+        weatherSource = App.getInstance().getWeatherSource();
+        adapterHistoryWeather = new RecyclerDataAdapterHistoryWeather(weatherSource, requireActivity(),this);
         historyWeather.setAdapter(adapterHistoryWeather);
     }
 
     public void clearList() {
-        educationSource.deleteAllHistorWeather();
+        weatherSource.deleteAllHistorWeather();
     }
 
     public void clearFilter() {
-        educationSource.loadHistoryweathers();
+        weatherSource.loadHistoryweathers();
         loadHistoryWeather();
     }
 
     public void validate(final SearchView tv){
-        String value = firstUpperCase(tv.getQuery().toString());
-        educationSource.getHistoryWeatherByTown("%"+value+"%");
-
-        if (educationSource.getHistoryWeathers().size() > 0) {
-            loadHistoryWeather();
-        } else {
-            clearFilter();
-            Snackbar.make(requireView(), "Такого города нет в вашей истории!", Snackbar.LENGTH_LONG).show();
-        }
+        final String value = firstUpperCase(tv.getQuery().toString());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (weatherSource.getHistoryWeatherByTown("%"+value+"%").size() > 0) {
+                    loadHistoryWeather();
+                } else {
+                    clearFilter();
+                    Snackbar.make(requireView(), "Такого города нет в вашей истории!", Snackbar.LENGTH_LONG).show();
+                }
+            }
+        }).start();
     }
 
     private void loadHistoryWeather() {
-        adapterHistoryWeather.setEducationSource(educationSource);
-        historyWeather.setAdapter(adapterHistoryWeather);
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                adapterHistoryWeather.setWeatherSource(weatherSource);
+                historyWeather.setAdapter(adapterHistoryWeather);
+            }
+        });
+
     }
 
     public String firstUpperCase(String word){

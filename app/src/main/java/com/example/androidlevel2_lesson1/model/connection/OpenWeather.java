@@ -1,4 +1,4 @@
-package com.example.androidlevel2_lesson1.data;
+package com.example.androidlevel2_lesson1.model.connection;
 
 import com.example.androidlevel2_lesson1.model.WeatherList;
 import com.example.androidlevel2_lesson1.model.WeatherRequest;

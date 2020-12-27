@@ -1,11 +1,8 @@
-package com.example.androidlevel2_lesson1.model;
+package com.example.androidlevel2_lesson1.model.db;
 
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-
-import java.util.Date;
 
 @Entity(indices = {@Index(value = {"town","date","temp"})})
 public class HistoryWeather {

@@ -1,4 +1,4 @@
-package com.example.androidlevel2_lesson1.model;
+package com.example.androidlevel2_lesson1.model.db;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -7,13 +7,13 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.androidlevel2_lesson1.model.HistoryWeather;
+import com.example.androidlevel2_lesson1.model.db.Town;
+import com.example.androidlevel2_lesson1.model.db.HistoryWeather;
 
-import java.util.Date;
 import java.util.List;
 
 @Dao
-public interface EducationDao {
+public interface WeatherDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertHistoryWeather(HistoryWeather historyWeather);
