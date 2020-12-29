@@ -2,6 +2,7 @@ package com.example.androidlevel2_lesson1.town;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -17,9 +18,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -35,6 +33,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.androidlevel2_lesson1.App;
+import com.example.androidlevel2_lesson1.dialog.MessageDialogFragment;
+import com.example.androidlevel2_lesson1.maps.ActivityMap;
 import com.example.androidlevel2_lesson1.model.dataTransfer.DataContainer;
 import com.example.androidlevel2_lesson1.R;
 import com.example.androidlevel2_lesson1.dialog.BottomDialogFragment;
@@ -44,7 +44,6 @@ import com.example.androidlevel2_lesson1.info.ActivityInfo;
 import com.example.androidlevel2_lesson1.setting.ActivitySettings;
 import com.example.androidlevel2_lesson1.weather.FragmentWeather;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -66,9 +65,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private volatile double[] coords = new double[2];
     private String townByCoords = "Чита";
-
-    private GoogleMap mMap;
-    private Marker currentMarker;
 
     private OnFragmentDialogListener onFragmentDialogListener = new OnFragmentDialogListener() {
         @Override
@@ -208,6 +204,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return toolbar;
     }
 
+    @SuppressLint("ResourceType")
     private void initDrawer(Toolbar toolbar) {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -255,7 +252,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.itemWeatherMap: {
-                //weatherCurrentTown();
+                Intent intent = new Intent(this, ActivityMap.class);
+                startActivity(intent);
                 break;
             }
             case R.id.itemHistoryWeather: {
@@ -324,23 +322,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public void onLocationChanged(Location location) {
                     double lat = location.getLatitude(); // Широта
                     coords[0] = lat;
-                    String latitude = Double.toString(lat);
-                    //textLatitude.setText(latitude);
-                    Log.i("GEO",latitude);
-
                     double lng = location.getLongitude(); // Долгота
                     coords[1] = lng;
-                    String longitude = Double.toString(lng);
-                    //textLongitude.setText(longitude);
-                    Log.i("GEO",longitude);
 
-                    townByCoords = getAddress(coords).get(0).getAdminArea();
-                    showStartWeather(coords,townByCoords);
-//                    String accuracy = Float.toString(location.getAccuracy());   // Точность
-//
-//                    LatLng currentPosition = new LatLng(lat, lng);
-//                    currentMarker.setPosition(currentPosition);
-//                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, (float)12));
+                    if (getAddress(coords) == null) {
+                        MessageDialogFragment messageDialogFragment = new MessageDialogFragment();
+                        messageDialogFragment.setVisibleOkButton(true);
+                        messageDialogFragment.setTextMessage(R.string.text_message_notnetwork);
+                        if (getSupportFragmentManager() != null) {
+                            if (!getSupportFragmentManager().isDestroyed()) {
+                                messageDialogFragment.show(getSupportFragmentManager(), "MessageFragment");
+                            }
+                        }
+                    }
+                    else {
+                        if (getAddress(coords).get(0).getLocality() != null) {
+                            townByCoords = getAddress(coords).get(0).getLocality();
+                        }
+                        else {
+                            townByCoords = getAddress(coords).get(0).getAdminArea();
+                        }
+                        showStartWeather(coords,townByCoords);
+
+                    }
                 }
 
                 @Override

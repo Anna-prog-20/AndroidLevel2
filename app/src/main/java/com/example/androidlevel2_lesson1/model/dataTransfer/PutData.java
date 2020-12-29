@@ -37,7 +37,6 @@ public class PutData implements Runnable{
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        Log.i("TAG", "PutData");
     }
 
 

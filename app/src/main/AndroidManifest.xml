@@ -36,7 +36,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".maps.MapsActivity"
+            android:name=".maps.ActivityMap"
             android:label="@string/title_activity_maps"></activity>
 
         <service android:name=".FirebaseMessagingService">

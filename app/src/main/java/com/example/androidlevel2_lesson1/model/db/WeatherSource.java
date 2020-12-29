@@ -28,7 +28,6 @@ public class WeatherSource {
 
 
     public List<HistoryWeather> getHistoryWeathers() {
-        Log.i("TAG", "WeatherSource getHistoryWeathers");
         if (historyWeathers == null) {
             loadHistoryweathers();
         }
@@ -65,7 +64,6 @@ public class WeatherSource {
             @Override
             public void run() {
                 towns = weatherDao.getAllTown();
-                Log.i("TAG", Thread.currentThread().getName());
             }
         });
 

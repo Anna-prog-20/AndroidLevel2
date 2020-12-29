@@ -14,6 +14,10 @@ public class DataContainer implements Serializable {
     private float lat;
     private float lon;
 
+    public void setTown(String town) {
+        this.town = town;
+    }
+
     public float getLat() {
         return lat;
     }
@@ -29,7 +33,6 @@ public class DataContainer implements Serializable {
     public void setLon(float lon) {
         this.lon = lon;
     }
-
 
     public boolean isCheckPressure() {
         return checkPressure;

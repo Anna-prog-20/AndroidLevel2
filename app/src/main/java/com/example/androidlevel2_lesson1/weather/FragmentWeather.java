@@ -206,9 +206,11 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
             @Override
             public void onResponse(Call<WeatherRequest> call, Response<WeatherRequest> response) {
                 if (response.body() != null) {
-                    handler.post(new PutData((FragmentWeather) requireActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentMainWeather), response.body()));
-                    savePreferences(MainActivity.sharedPreferences);
-                    Log.i("TAG","onStart");
+                    if (requireActivity() != null) {
+                        handler.post(new PutData((FragmentWeather) requireActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentMainWeather), response.body()));
+                        savePreferences(MainActivity.sharedPreferences);
+                        Log.i("TAG", "onStart");
+                    }
                 }
                 else {
                     dlgBuilder.show(requireActivity().getSupportFragmentManager(),"dialogBuilder");
@@ -218,7 +220,7 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
             @Override
             public void onFailure(Call<WeatherRequest> call, Throwable t) {
                 Log.i("TAG", String.valueOf(t));
-                showMessageNotNetwork();
+                //showMessageNotNetwork();
             }
         });
 
@@ -251,11 +253,12 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
         MessageDialogFragment messageDialogFragment = new MessageDialogFragment();
         messageDialogFragment.setVisibleOkButton(false);
         messageDialogFragment.setTextMessage(R.string.text_message_notnetwork);
-        if (!requireActivity().isDestroyed()) {
-            if (!requireActivity().getSupportFragmentManager().isDestroyed()) {
-                messageDialogFragment.show(requireActivity().getSupportFragmentManager(), "MessageFragment");
+        if (requireActivity() != null)
+            if (!requireActivity().isDestroyed()) {
+                if (!requireActivity().getSupportFragmentManager().isDestroyed()) {
+                    messageDialogFragment.show(requireActivity().getSupportFragmentManager(), "MessageFragment");
+                }
             }
-        }
     }
 
     private void initArrayImageId() {

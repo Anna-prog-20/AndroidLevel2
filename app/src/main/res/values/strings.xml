@@ -48,8 +48,8 @@
 
     <string name="itemInfo">О программе</string>
     <string name="itemInfoTown">О городе</string>
-    <string name="itemWeatherCurrentTown">Узнать погоду по текущему местоположению</string>
-    <string name="itemWeatherMap">Узнать погоду по карте</string>
+    <string name="itemWeatherCurrentTown">Узнать погоду</string>
+    <string name="itemWeatherMap">"Узнать погоду по карте"</string>
     <string name="itemHistoryWeather">История прогнозов</string>
     <string name="itemSetting">Настройки</string>
     <string name="itemAdd">Добавить город в список</string>
