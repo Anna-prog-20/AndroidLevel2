@@ -361,7 +361,7 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
     }
 
     private void setupRecyclerView(InputDataContainer inputDataContainer) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),RecyclerView.HORIZONTAL,false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false);
         RecyclerDataAdapter adapter = new RecyclerDataAdapter(inputDataContainer.arrayListWeek, inputDataContainer.arrayListTemperature);
         listWeather.setLayoutManager(layoutManager);
         listWeather.setAdapter(adapter);

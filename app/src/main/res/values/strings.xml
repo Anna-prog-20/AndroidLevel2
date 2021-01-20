@@ -71,7 +71,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Войдите через аккаунт Google</string>
-    <string name="nav_header_title_free">Вы запустили ограниченную версию погодного приложения</string>
+    <string name="nav_header_title_free">Ограниченная версия приложения</string>
     <string name="nav_header_button_Enter">Войти</string>
     <string name="nav_header_button_Exit">Выйти</string>
 

@@ -72,7 +72,7 @@ public class PutData implements Runnable{
 
     private void setArrayList(WeatherRequest weatherRequest, Fragment fragment){
         Long weatherRequestCurrent, weatherRequestNext;
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM", Locale.getDefault());
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
         inputDataContainer.arrayListWeek=new ArrayList<>();
         inputDataContainer.arrayListTemperature=new ArrayList<>();
         for(int i=t+1;i<weatherRequest.getList().length-1;i++){

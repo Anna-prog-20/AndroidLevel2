@@ -29,12 +29,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
-            android:paddingRight="@dimen/nav_header_vertical_spacing"
-            android:lines="2"
+            android:paddingBottom="@dimen/nav_header_vertical_spacing"
             android:text="@string/nav_header_title_free"
-            android:textSize="12sp"
-            android:textColor="@color/colorPrimaryDark"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textStyle="bold" />
     </LinearLayout>
 
 </LinearLayout>
