@@ -1,0 +1,97 @@
+<resources>
+    <string name="app_name">Погода</string>
+    <string name="date_current">текущая дата</string>
+    <string name="time_current">текущее время</string>
+    <string name="temperature">%d \u2103</string>
+    <string name="hintTown">Введите город</string>
+    <string name="messageTown">Введенного города в списке не найдено</string>
+    <string name="town">Чита</string>
+    <string-array name="listTown">
+        <item>fff</item>
+        <item>Чита</item>
+        <item>Могоча</item>
+        <item>Краснокаменск</item>
+        <item>Москва</item>
+        <item>Челябинск</item>
+        <item>Усурийск</item>
+        <item>Киров</item>
+        <item>Екатеринбург</item>
+        <item>Новосибирск</item>
+        <item>Иркутск</item>
+        <item>Улан-Удэ</item>
+        <item>Хабаровск</item>
+        <item>Владивосток</item>
+        <item>Краснодар</item>
+        <item>Воронеж</item>
+    </string-array>
+    <string-array name="listHistoryWeather">
+        <item>Чита</item>
+        <item>Могоча</item>
+        <item>Краснокаменск</item>
+        <item>Москва</item>
+        <item>Воронеж</item>
+    </string-array>
+    <string name="buttonSelect">Выбрать</string>
+    <string name="settings">Настройки</string>
+    <string name="windSpeed">Скорость ветра</string>
+    <string name="txtWindSpeed">%d м/с</string>
+    <string name="pressure">Атмосферное давление</string>
+    <string name="txtPressure">%d гПА</string>
+    <string name="addSettings">Дополнительные настройки</string>
+    <string name="themeBlack">Темная</string>
+    <string name="themeWhite">Светлая</string>
+    <string name="theme">Темы приложения</string>
+    <string name="imageContentDescription">Солнечно</string>
+    <string name="templateTemperature">%d \u2103</string>
+    <string name="templateWindSpeed">%d м/с</string>
+    <string name="templatePressure">%d гПА</string>
+
+    <string name="itemInfo">О программе</string>
+    <string name="itemInfoTown">О городе</string>
+    <string name="itemWeatherCurrentTown">Узнать погоду</string>
+    <string name="itemWeatherMap">"Узнать погоду по карте"</string>
+    <string name="itemHistoryWeather">История прогнозов</string>
+    <string name="itemSetting">Настройки</string>
+    <string name="itemAdd">Добавить город в список</string>
+    <string name="itemChange">Изменить город</string>
+    <string name="itemDelete">Удалить город из списка</string>
+    <string name="itemClear">Отчистить список</string>
+    <string name="itemClearFilter">Отчистить фильтр</string>
+    <string name="large_text">
+        "О программе Погода.\n\n"
+
+        "Разработчики: Шишмарева Анна Владимировна.\n\n"
+        "При поддержке GeekBrains"
+    </string>
+    <string name="action_settings">Настройки</string>
+    <string name="itemTown">Выбор города</string>
+    <string name="weatherURL">https://api.openweathermap.org/data/2.5/forecast?q=%s&amp;units=metric&amp;appid=%s</string>
+    <string name="webService">http://api.openweathermap.org/</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Войдите через аккаунт Google</string>
+    <string name="nav_header_title_free">Вы запустили ограниченную версию погодного приложения</string>
+    <string name="nav_header_button_Enter">Войти</string>
+    <string name="nav_header_button_Exit">Выйти</string>
+
+    <string name="title_dialog">Внимание!</string>
+    <string name="add">Добавить</string>
+    <string name="cancel">Отмена</string>
+
+    <string name="title_message">Внимание!</string>
+    <string name="text_message_notnetwork">Отсутствует подключение к сети Интернет!</string>
+    <string name="text_message_battary">Уровень зарада батареи очень низкий! Рекомендуем зарядить свой гаджет :) !</string>
+    <string name="exit">Выйти</string>
+    <string name="ok">Продолжить работу</string>
+
+    <string name="message_dialog">Такого города нет в вашем списке! Добавить?</string>
+    <string name="message_dialog_error_cnnection">При соединении с сервером произошла ошибка! Приносим свои извинения!</string>
+    <string name="title_search">Поиск</string>
+
+<!--    <string name="map">Погода по карте</string>-->
+    <string name="title_activity_maps">Погода по карте</string>
+    <string name="latitude">Широта</string>
+    <string name="longitude">Долгота</string>
+
+</resources>
