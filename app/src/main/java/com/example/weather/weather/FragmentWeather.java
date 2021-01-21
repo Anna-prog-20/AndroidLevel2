@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -57,7 +58,7 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
     private ImageView imageTemperature;
     private ArrayList arrayImageId;
     private DataContainer currentData;
-    private int t=0;
+    private int t = 0;
     private OpenWeather openWeather;
     private String apiKey;
 
@@ -68,19 +69,18 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
     private NetworkReceiver networkReceiver = App.getInstance().getNetworkReceiver();
     private BatteryReceiver batteryReceiver = App.getInstance().getBatteryReceiver();
 
-    public static FragmentWeather create(DataContainer currentData){
-        FragmentWeather f=new FragmentWeather();
-        Bundle args=new Bundle();
-        args.putSerializable(dataKey,currentData);
+    public static FragmentWeather create(DataContainer currentData) {
+        FragmentWeather f = new FragmentWeather();
+        Bundle args = new Bundle();
+        args.putSerializable(dataKey, currentData);
         f.setArguments(args);
         return f;
     }
 
-    public DataContainer getDataCurrent(){
+    public DataContainer getDataCurrent() {
         if (getArguments() != null) {
             return (DataContainer) getArguments().getSerializable(dataKey);
-        }
-        else {
+        } else {
             if (requireActivity() != null) {
                 return (DataContainer) requireActivity().getIntent().getSerializableExtra(dataKey);
             }
@@ -92,7 +92,7 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
     public void onSaveInstanceState(@NonNull Bundle outState) {
         currentData.setCheckWindSpeed(check(windSpeed));
         currentData.setCheckPressure(check(pressure));
-        outState.putSerializable(dataKey,currentData);
+        outState.putSerializable(dataKey, currentData);
         super.onSaveInstanceState(outState);
     }
 
@@ -113,7 +113,7 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
         super.onStop();
     }
 
-    private boolean check(TextView textView){
+    private boolean check(TextView textView) {
         return textView.getVisibility() == View.VISIBLE;
     }
 
@@ -140,7 +140,7 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
     @Override
     public void onResume() {
         super.onResume();
-        if (MainActivity.sharedPreferences!=null) {
+        if (MainActivity.sharedPreferences != null) {
             loadPreferences(MainActivity.sharedPreferences);
         }
         if (this.isVisible()) {
@@ -151,7 +151,7 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         initViews(view);
-        if (MainActivity.sharedPreferences!=null) {
+        if (MainActivity.sharedPreferences != null) {
             loadPreferences(MainActivity.sharedPreferences);
         }
 
@@ -167,8 +167,7 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
             } else {
                 requestRetrofit(String.valueOf(town.getText()), apiKey);
             }
-        }
-        else {
+        } else {
             requestRetrofit(String.valueOf(town.getText()), apiKey);
         }
 
@@ -191,7 +190,7 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
     }
 
     private void outputImage() {
-        int index = (int) Math.round(Math.random()*(arrayImageId.size()-1));
+        int index = (int) Math.round(Math.random() * (arrayImageId.size() - 1));
         Picasso.get()
                 .load((Integer) arrayImageId.get(index))
                 .into(imageTemperature);
@@ -281,11 +280,11 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
 
     private void initViews(View view) {
         currentData = getDataCurrent();
-        date=view.findViewById(R.id.dateCurrent);
-        time=view.findViewById(R.id.timeCurrent);
-        temperature=view.findViewById(R.id.temperatureCurrent);
-        town=view.findViewById(R.id.townCurrent);
-        windSpeed=view.findViewById(R.id.windSpeed);
+        date = view.findViewById(R.id.dateCurrent);
+        time = view.findViewById(R.id.timeCurrent);
+        temperature = view.findViewById(R.id.temperatureCurrent);
+        town = view.findViewById(R.id.townCurrent);
+        windSpeed = view.findViewById(R.id.windSpeed);
         pressure = view.findViewById(R.id.pressure);
         listWeather = view.findViewById(R.id.listWeather);
         imageTemperature = view.findViewById(R.id.imageTemperature);
@@ -296,11 +295,10 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
         dlgBuilder.setVisibleAddButton(false);
     }
 
-    private void visible(TextView textView,boolean b){
+    private void visible(TextView textView, boolean b) {
         if (b) {
             textView.setVisibility(View.VISIBLE);
-        }
-        else
+        } else
             textView.setVisibility(View.GONE);
     }
 
@@ -332,8 +330,8 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
         return town;
     }
 
-    private void outputData(){
-        if (currentData!=null) {
+    private void outputData() {
+        if (currentData != null) {
             String txtTown = currentData.getTown();
             setTown(txtTown);
         }
@@ -356,12 +354,12 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
         thermometerView.setLevel(inputDataContainer.levelThermometer);
         thermometerView.invalidate();
 
-        HistoryWeather historyWeather = new HistoryWeather(town.getText().toString(),inputDataContainer.date,inputDataContainer.temperature);
+        HistoryWeather historyWeather = new HistoryWeather(town.getText().toString(), inputDataContainer.date, inputDataContainer.temperature);
         App.getInstance().getWeatherSource().addHistoryWeather(historyWeather);
     }
 
     private void setupRecyclerView(InputDataContainer inputDataContainer) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         RecyclerDataAdapter adapter = new RecyclerDataAdapter(inputDataContainer.arrayListWeek, inputDataContainer.arrayListTemperature);
         listWeather.setLayoutManager(layoutManager);
         listWeather.setAdapter(adapter);
@@ -377,7 +375,7 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
         }
     }
 
-    private void savePreferences(SharedPreferences sharedPref){
+    private void savePreferences(SharedPreferences sharedPref) {
         String key = "town";
         if (sharedPref != null) {
             SharedPreferences.Editor editor = sharedPref.edit();
@@ -387,12 +385,12 @@ public class FragmentWeather extends Fragment implements OnFragmentDialogListene
         Log.i("TAG", town.getText().toString());
     }
 
-    private void loadPreferences(SharedPreferences sharedPref){
+    private void loadPreferences(SharedPreferences sharedPref) {
         String keyCheckPressure = ActivitySettings.KEYS[0];
         String keyCheckWindSpeed = ActivitySettings.KEYS[1];
-        boolean checkPressure = sharedPref.getBoolean(keyCheckPressure,true);
-        boolean checkWindSpeed = sharedPref.getBoolean(keyCheckWindSpeed,true);
-        visible(windSpeed,checkWindSpeed);
-        visible(pressure,checkPressure);
+        boolean checkPressure = sharedPref.getBoolean(keyCheckPressure, true);
+        boolean checkWindSpeed = sharedPref.getBoolean(keyCheckWindSpeed, true);
+        visible(windSpeed, checkWindSpeed);
+        visible(pressure, checkPressure);
     }
 }

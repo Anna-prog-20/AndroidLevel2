@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/itemAddTown"
-        android:visible="false"
         android:icon="@android:drawable/ic_menu_info_details"
-        android:title="@string/itemAdd"/>
+        android:title="@string/itemAdd"
+        android:visible="false" />
     <item
         android:id="@+id/itemChange"
         android:icon="@android:drawable/ic_menu_edit"
@@ -13,9 +13,9 @@
         android:visible="false" />
     <item
         android:id="@+id/itemInfoTown"
-        android:visible="false"
         android:icon="@android:drawable/ic_menu_mapmode"
-        android:title="@string/itemInfoTown" />
+        android:title="@string/itemInfoTown"
+        android:visible="false" />
     <item
         android:id="@+id/itemHistoryWeather"
         android:icon="@android:drawable/ic_menu_recent_history"
@@ -23,27 +23,27 @@
     <item
         android:id="@+id/itemInfo"
         android:icon="@android:drawable/ic_menu_info_details"
-        android:title="@string/itemInfo"/>
+        android:title="@string/itemInfo" />
     <item
         android:id="@+id/itemSetting"
-        android:visible="false"
         android:icon="@android:drawable/ic_menu_manage"
-        android:title="@string/itemSetting" />
+        android:title="@string/itemSetting"
+        android:visible="false" />
     <item
         android:id="@+id/itemClearFilter"
         android:icon="@android:drawable/ic_menu_delete"
-        android:visible="false"
-        android:title="@string/itemClearFilter" />
+        android:title="@string/itemClearFilter"
+        android:visible="false" />
     <item
         android:id="@+id/itemClear"
         android:icon="@android:drawable/ic_menu_delete"
-        android:visible="false"
-        android:title="@string/itemClear" />
+        android:title="@string/itemClear"
+        android:visible="false" />
     <item
         android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
         android:orderInCategory="5"
         android:title="@string/title_search"
-        android:icon="@android:drawable/ic_menu_search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always" />
 </menu>

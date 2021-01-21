@@ -109,14 +109,14 @@ public class ActivityMap extends FragmentActivity implements OnMapReadyCallback 
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-                requestRetrofitCoord(latLng,apiKey);
+                requestRetrofitCoord(latLng, apiKey);
             }
         });
 
     }
 
     // Добавление меток на карту
-    private void addMarker(LatLng location, String title){
+    private void addMarker(LatLng location, String title) {
         Marker marker = mMap.addMarker(new MarkerOptions()
                 .position(location)
                 .title(title)
@@ -159,11 +159,10 @@ public class ActivityMap extends FragmentActivity implements OnMapReadyCallback 
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, (float) 12));
                     if (getAddress(currentPosition).get(0).getLocality() != null) {
                         townByCoords = getAddress(currentPosition).get(0).getLocality();
-                    }
-                    else {
+                    } else {
                         townByCoords = getAddress(currentPosition).get(0).getAdminArea();
                     }
-                    tempRetrofitCoord(currentPosition,apiKey);
+                    tempRetrofitCoord(currentPosition, apiKey);
                 }
 
                 @Override
@@ -230,10 +229,11 @@ public class ActivityMap extends FragmentActivity implements OnMapReadyCallback 
                 if (response.body() != null) {
                     if (response.body().getList()[0].getMain() != null) {
                         currentTemp = (int) (response.body().getList()[0].getMain().getTemp() - 273.15);
-                        currentMarker.setTitle(String.format("%s, %d\u2103",townByCoords, currentTemp));
+                        currentMarker.setTitle(String.format("%s, %d\u2103", townByCoords, currentTemp));
                     }
                 }
             }
+
             @Override
             public void onFailure(Call<WeatherRequest> call, Throwable t) {
                 Log.i("TAG", String.valueOf(t));
@@ -249,13 +249,11 @@ public class ActivityMap extends FragmentActivity implements OnMapReadyCallback 
                 if (response.body() != null) {
                     if (getAddress(latLng).get(0).getLocality() != null) {
                         addMarker(latLng, String.format("%s, %d\u2103", getAddress(latLng).get(0).getLocality(), (int) (response.body().getList()[0].getMain().getTemp() - 273.15)));
-                    }
-                    else {
+                    } else {
                         addMarker(latLng, String.format("%s, %d\u2103", getAddress(latLng).get(0).getAdminArea(), (int) (response.body().getList()[0].getMain().getTemp() - 273.15)));
                     }
-                }
-                else {
-                    dlgBuilder.show(getSupportFragmentManager(),"dialogBuilder");
+                } else {
+                    dlgBuilder.show(getSupportFragmentManager(), "dialogBuilder");
                 }
             }
 
@@ -269,7 +267,7 @@ public class ActivityMap extends FragmentActivity implements OnMapReadyCallback 
     }
 
     // Получаем адрес по координатам
-    private List<Address> getAddress(LatLng latLng){
+    private List<Address> getAddress(LatLng latLng) {
         final Geocoder geocoder = new Geocoder(this);
         try {
             return geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);

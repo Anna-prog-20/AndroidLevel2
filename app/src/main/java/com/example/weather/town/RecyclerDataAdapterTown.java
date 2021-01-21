@@ -2,7 +2,9 @@ package com.example.weather.town;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -17,11 +19,25 @@ import com.example.weather.IRVOnItemClick;
 
 import java.util.List;
 
-public class RecyclerDataAdapterTown extends RecyclerView.Adapter<RecyclerDataAdapterTown.ViewHolderTown>{
+public class RecyclerDataAdapterTown extends RecyclerView.Adapter<RecyclerDataAdapterTown.ViewHolderTown> {
     private IRVOnItemClick onItemClickCallback;
     private WeatherSource weatherSource;
     private Activity activity;
     private ViewHolderTown viewHolderTown;
+    private String selectTown;
+    private int menuPosition;
+
+    public int getPosition() {
+        return menuPosition;
+    }
+
+    public void setPosition(int position) {
+        this.menuPosition = position;
+    }
+
+    public String getSelectTown() {
+        return selectTown;
+    }
 
     public RecyclerDataAdapterTown(WeatherSource weatherSource, Activity activity, IRVOnItemClick onItemClickCallback) {
         this.weatherSource = weatherSource;
@@ -39,12 +55,24 @@ public class RecyclerDataAdapterTown extends RecyclerView.Adapter<RecyclerDataAd
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolderTown holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolderTown holder, final int position) {
         List<Town> towns = weatherSource.getTowns();
         Town town = towns.get(position);
         viewHolderTown = holder;
         holder.setTextToTextView(town.getTown());
         holder.setOnClickForItem(town.getTown());
+
+        holder.getTextView().setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                selectTown = holder.getTextView().getText().toString();
+                setPosition(position);
+                return false;
+            }
+        });
+        if (activity != null) {
+            activity.registerForContextMenu(holder.getTextView());
+        }
     }
 
     @Override
@@ -67,9 +95,13 @@ public class RecyclerDataAdapterTown extends RecyclerView.Adapter<RecyclerDataAd
     public void setSelectedTown() {
         viewHolderTown.setColorItem(Color.WHITE);
     }
-    
+
     class ViewHolderTown extends RecyclerView.ViewHolder {
         private TextView textView;
+
+        public TextView getTextView() {
+            return textView;
+        }
 
         public ViewHolderTown(@NonNull View itemView) {
             super(itemView);
@@ -84,7 +116,7 @@ public class RecyclerDataAdapterTown extends RecyclerView.Adapter<RecyclerDataAd
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(onItemClickCallback != null) {
+                    if (onItemClickCallback != null) {
                         onItemClickCallback.onItemClicked(text);
                     }
                 }

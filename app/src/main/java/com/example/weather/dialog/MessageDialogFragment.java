@@ -75,8 +75,7 @@ public class MessageDialogFragment extends DialogFragment {
                 builder.setMessage(idRes);
             }
 
-        } else
-        {
+        } else {
             builder = new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.title_dialog)
                     .setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {

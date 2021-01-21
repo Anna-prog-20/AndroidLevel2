@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -21,6 +24,7 @@ import com.example.weather.App;
 import com.example.weather.BatteryReceiver;
 import com.example.weather.BuildConfig;
 import com.example.weather.NetworkReceiver;
+import com.example.weather.dialog.BottomDialogFragment;
 import com.example.weather.model.dataTransfer.DataContainer;
 import com.example.weather.IRVOnItemClick;
 import com.example.weather.R;
@@ -41,8 +45,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragmentDialogListener {
-    private boolean isExistWeather=false;
+    private boolean isExistWeather = false;
     private DataContainer currentData;
+
     private RecyclerView town;
     private String townSelected;
     private String value;
@@ -75,12 +80,14 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         handler = new Handler();
-        return inflater.inflate(R.layout.fragment_town,container,false);
+
+        return inflater.inflate(R.layout.fragment_town, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        registerForContextMenu((RecyclerView) view.findViewById(R.id.listTown));
         setupRecyclerView(view);
         initDialog();
         initPreferences();
@@ -101,23 +108,22 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
                 == Configuration.ORIENTATION_LANDSCAPE;
         if (getActivity().getIntent().getSerializableExtra(FragmentWeather.dataKey) != null) {
             currentData = (DataContainer) getActivity().getIntent().getSerializableExtra(FragmentWeather.dataKey);
-        }
-        else {
-            if(savedInstanceState!=null)
-                currentData=(DataContainer) savedInstanceState.getSerializable(FragmentWeather.dataKey);
+        } else {
+            if (savedInstanceState != null)
+                currentData = (DataContainer) savedInstanceState.getSerializable(FragmentWeather.dataKey);
             else {
                 currentData = new DataContainer(getResources().getStringArray(R.array.listTown)[0]);
                 getCurrentData(null, getResources().getStringArray(R.array.listTown)[0]);
             }
         }
-       if (isExistWeather){
+        if (isExistWeather) {
             showWeather(currentData);
         }
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putSerializable(FragmentWeather.dataKey,currentData);
+        outState.putSerializable(FragmentWeather.dataKey, currentData);
         super.onSaveInstanceState(outState);
     }
 
@@ -126,13 +132,38 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
         onClick(null, itemText);
     }
 
+    @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = requireActivity().getMenuInflater();
+        inflater.inflate(R.menu.context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        //ContextMenu.ContextMenuInfo menuInfo = item.getMenuInfo();
+        switch (item.getItemId()) {
+            case R.id.itemAddTown:
+                if (requireActivity() != null) {
+                    ((MainActivity) requireActivity()).addTown();
+                    return true;
+                }
+
+            case R.id.itemDeleteTown:
+                weatherSource.deleteTown(adapterTown.getSelectTown());
+                loadTown();
+                return true;
+        }
+        return super.onContextItemSelected(item);
+    }
+
     public void setTownSelected(String townSelected) {
         this.townSelected = townSelected;
     }
 
-    private DataContainer getCurrentData(double[] coords, String itemText){
-        DataContainer currentDataI=new DataContainer(itemText);
-        if (currentData!=null) {
+    private DataContainer getCurrentData(double[] coords, String itemText) {
+        DataContainer currentDataI = new DataContainer(itemText);
+        if (currentData != null) {
             currentDataI.setCheckPressure(currentData.isCheckPressure());
             currentDataI.setCheckWindSpeed(currentData.isCheckWindSpeed());
             if (coords != null) {
@@ -143,15 +174,15 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
         return currentDataI;
     }
 
-    public void onClick(double[] coords, final String itemText){
+    public void onClick(double[] coords, final String itemText) {
         townSelected = itemText;
         showWeather(getCurrentData(coords, itemText));
     }
 
-    private void showWeather(DataContainer currentData){
-        if(isExistWeather) {
+    private void showWeather(DataContainer currentData) {
+        if (isExistWeather) {
             FragmentWeather detail = (FragmentWeather) getChildFragmentManager().findFragmentById(R.id.fragmentMainWeather);
-            if (detail == null|| !detail.getDataCurrent().getTown().equals(currentData.getTown())) {
+            if (detail == null || !detail.getDataCurrent().getTown().equals(currentData.getTown())) {
                 detail = FragmentWeather.create(currentData);
                 FragmentTransaction ft = getChildFragmentManager().beginTransaction();
                 ft.replace(R.id.fragmentMainWeather, detail);
@@ -159,24 +190,24 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
                 ft.addToBackStack("Some_Key");
                 ft.commit();
             }
-        }
-            else {
-                if (getActivity() != null) {
-                    Intent intent = new Intent(getActivity(), ActivityWeather.class);
-                    intent.putExtra(FragmentWeather.dataKey, currentData);
-                    startActivity(intent);
-                }
+        } else {
+            if (getActivity() != null) {
+                Intent intent = new Intent(getActivity(), ActivityWeather.class);
+                intent.putExtra(FragmentWeather.dataKey, currentData);
+                startActivity(intent);
             }
+        }
     }
 
     private void setupRecyclerView(View view) {
-        town=view.findViewById(R.id.listTown);
+        town = view.findViewById(R.id.listTown);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         town.setLayoutManager(layoutManager);
         initTown();
     }
 
     private void initTown() {
+        town.setHasFixedSize(true);
         weatherSource = App.getInstance().getWeatherSource();
         if (requireActivity() != null) {
             adapterTown = new RecyclerDataAdapterTown(weatherSource, requireActivity(), this);
@@ -188,13 +219,13 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
         dlgBuilder = new DialogBuilderFragment();
     }
 
-    public void validate(final String tv){
+    public void validate(final String tv) {
         value = firstUpperCase(tv);
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (weatherSource.getTownByTown("%"+value+"%").size() > 0) {
+                if (weatherSource.getTownByTown("%" + value + "%").size() > 0) {
                     loadTown();
                 } else {
                     connection();
@@ -230,25 +261,23 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
             int countTown = 0;
             if (weatherSource.getTowns() != null) {
                 countTown = weatherSource.getTowns().size();
-            }
-            else {
+            } else {
                 countTown = (int) weatherSource.getCountTown();
             }
             town.scrollToPosition(countTown);
             Snackbar.make(requireView(), "Город успешно добавлен!", Snackbar.LENGTH_LONG).show();
 
-        }
-        else {
+        } else {
             Snackbar.make(requireView(), "Такого города не существует!", Snackbar.LENGTH_LONG).show();
         }
     }
 
-    public String firstUpperCase(String word){
+    public String firstUpperCase(String word) {
         if (word == null || word.isEmpty()) return "";
         return word.substring(0, 1).toUpperCase() + word.substring(1);
     }
 
-    private void connection(){
+    private void connection() {
         initRetorfit();
         requestRetrofit(townSelected, apiKey);
     }
@@ -256,7 +285,7 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
     private void initPreferences() {
         apiKey = BuildConfig.WEATHER_API_KEY;
     }
-    
+
     private void initRetorfit() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(getString(R.string.webService))
@@ -272,8 +301,7 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
             public void onResponse(Call<WeatherRequest> call, Response<WeatherRequest> response) {
                 if (response.body() == null) {
                     connected[0] = false;
-                }
-                else {
+                } else {
                     connected[0] = true;
                 }
             }
@@ -290,8 +318,7 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
             public void onResponse(Call<WeatherRequest> call, Response<WeatherRequest> response) {
                 if (response.body() == null) {
                     connected[0] = false;
-                }
-                else {
+                } else {
                     connected[0] = true;
                 }
             }
@@ -320,7 +347,7 @@ public class FragmentTown extends Fragment implements IRVOnItemClick, OnFragment
     public void onDialogResult(int id) {
         if (id == R.string.add) {
             handler = new Handler();
-            addTown(connected[0],value);
+            addTown(connected[0], value);
         }
         if (id == R.string.exit) {
             if (requireActivity() != null) {

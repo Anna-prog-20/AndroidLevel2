@@ -155,9 +155,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.itemAddTown: {
-                dialogFragment = BottomDialogFragment.newInstance();
-                dialogFragment.setOnFragmentDialogListener(onFragmentDialogListener);
-                dialogFragment.show(getSupportFragmentManager(), "dialogFragment");
+                addTown();
                 return true;
             }
             case R.id.itemHistoryWeather: {
@@ -183,6 +181,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return super.onOptionsItemSelected(item);
             }
         }
+    }
+
+    public void addTown() {
+        dialogFragment = BottomDialogFragment.newInstance();
+        dialogFragment.setOnFragmentDialogListener(onFragmentDialogListener);
+        dialogFragment.show(getSupportFragmentManager(), "dialogFragment");
     }
 
     @Override

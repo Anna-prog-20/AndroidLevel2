@@ -49,7 +49,7 @@ public class FragmentHistoryWeather extends Fragment implements IRVOnItemClick, 
         handlerThread.start();
         handler1 = new Handler(handlerThread.getLooper());
         handler = new Handler();
-        return inflater.inflate(R.layout.fragment_history_weather,container,false);
+        return inflater.inflate(R.layout.fragment_history_weather, container, false);
     }
 
     @Override
@@ -111,22 +111,22 @@ public class FragmentHistoryWeather extends Fragment implements IRVOnItemClick, 
     }
 
     public void clearFilter() {
-       handler1.post(new Runnable() {
+        handler1.post(new Runnable() {
             @Override
             public void run() {
                 weatherSource.loadHistoryweathers();
             }
-       });
-       loadHistoryWeather();
+        });
+        loadHistoryWeather();
     }
 
-    public void validate(final SearchView tv){
+    public void validate(final SearchView tv) {
         final String value = firstUpperCase(tv.getQuery().toString());
 
         handler1.post(new Runnable() {
             @Override
             public void run() {
-                if (weatherSource.getHistoryWeatherByTown("%"+value+"%").size() > 0) {
+                if (weatherSource.getHistoryWeatherByTown("%" + value + "%").size() > 0) {
                     loadHistoryWeather();
                 } else {
                     clearFilter();
@@ -147,7 +147,7 @@ public class FragmentHistoryWeather extends Fragment implements IRVOnItemClick, 
 
     }
 
-    public String firstUpperCase(String word){
+    public String firstUpperCase(String word) {
         if (word == null || word.isEmpty()) return "";
         return word.substring(0, 1).toUpperCase() + word.substring(1);
     }

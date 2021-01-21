@@ -9,7 +9,7 @@ public class WeatherSource {
     private final WeatherDao weatherDao;
 
     private List<HistoryWeather> historyWeathers;
-    private List<Town> towns;
+    private volatile List<Town> towns;
 
     private HandlerThread handlerThread;
     private Handler handler;
@@ -51,7 +51,7 @@ public class WeatherSource {
 
     public void loadTowns() {
         towns = weatherDao.getAllTown();
-}
+    }
 
     public long getCountHistoryWeather() {
         return weatherDao.getCountHistoryWeather();
@@ -70,6 +70,7 @@ public class WeatherSource {
 
     /**
      * Функция добавления погоды в историю
+     *
      * @param historyWeather
      */
     public void addHistoryWeather(final HistoryWeather historyWeather) {
@@ -93,7 +94,6 @@ public class WeatherSource {
     }
 
     /**
-     *
      * @param historyWeather
      */
     public void updateHistorWeather(final HistoryWeather historyWeather) {
@@ -115,8 +115,8 @@ public class WeatherSource {
             }
         });
     }
+
     /**
-     *
      * @param id
      */
     public void deleteHistorWeather(final long id) {
@@ -150,6 +150,16 @@ public class WeatherSource {
             @Override
             public void run() {
                 weatherDao.deleteTownById(id);
+                loadTowns();
+            }
+        });
+    }
+
+    public void deleteTown(final String town) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                weatherDao.deleteTownByTown(town);
                 loadTowns();
             }
         });

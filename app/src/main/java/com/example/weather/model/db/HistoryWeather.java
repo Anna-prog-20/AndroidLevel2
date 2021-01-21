@@ -4,7 +4,7 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(indices = {@Index(value = {"town","date","temp"})})
+@Entity(indices = {@Index(value = {"town", "date", "temp"})})
 public class HistoryWeather {
     @PrimaryKey(autoGenerate = true)
     public long id;

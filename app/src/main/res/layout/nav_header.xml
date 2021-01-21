@@ -7,44 +7,47 @@
     android:background="@drawable/background_additional"
     android:gravity="bottom"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
             android:id="@+id/imageHeader"
             android:layout_width="match_parent"
             android:layout_height="@dimen/nav_image_header_height"
-            android:paddingTop="@dimen/nav_header_vertical_spacing"
+            android:padding="@dimen/nav_header_vertical_spacing"
             app:srcCompat="@drawable/image_header" />
-
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="@color/colorField">
 
-        <TextView
-            android:id="@+id/nameAccount"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/nav_header_vertical_spacing"
-            android:paddingRight="@dimen/nav_header_vertical_spacing"
-            android:lines="2"
-            android:layout_weight="1"
-            android:text="@string/nav_header_title"
-            android:textSize="12sp"
-            android:textColor="@color/colorPrimaryDark"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-        <Button
-            android:id="@+id/buttonAccount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/nav_header_button_Enter"
-            android:textSize="12sp">
+            android:layout_height="match_parent"
+            android:padding="@dimen/nav_header_account"
+            android:orientation="horizontal">
 
-        </Button>
-    </LinearLayout>
+            <TextView
+                android:id="@+id/nameAccount"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:lines="2"
+                android:text="@string/nav_header_title"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/buttonAccount"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:backgroundTint="#038CCC"
+                android:text="@string/nav_header_button_Enter"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>

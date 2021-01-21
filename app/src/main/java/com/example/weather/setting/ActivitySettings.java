@@ -21,7 +21,7 @@ import static com.example.weather.weather.FragmentWeather.dataKey;
 
 public class ActivitySettings extends AppCompatActivity {
     public static String[] KEYS = {"isCheckPressure", "isCheckWindSpeed"};
-    private CheckBox windSpeed,pressure;
+    private CheckBox windSpeed, pressure;
     private DataContainer currentData;
 
     @Override
@@ -36,7 +36,7 @@ public class ActivitySettings extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(@Nullable Bundle saveInstanceState) {
         assert saveInstanceState != null;
-        saveInstanceState.putSerializable(dataKey,currentData);
+        saveInstanceState.putSerializable(dataKey, currentData);
         super.onSaveInstanceState(saveInstanceState);
     }
 
@@ -79,40 +79,40 @@ public class ActivitySettings extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }
-           default: {
+            default: {
                 return super.onOptionsItemSelected(item);
             }
         }
     }
 
-    private void init(){
-        windSpeed=findViewById(R.id.windSpeed);
-        pressure=findViewById(R.id.pressure);
+    private void init() {
+        windSpeed = findViewById(R.id.windSpeed);
+        pressure = findViewById(R.id.pressure);
         currentData = getDataCurrent();
     }
 
-    private void check(boolean b,CheckBox checkBox){
-        if(b)
+    private void check(boolean b, CheckBox checkBox) {
+        if (b)
             checkBox.setChecked(true);
         else
             checkBox.setChecked(false);
     }
 
-    public DataContainer getDataCurrent(){
+    public DataContainer getDataCurrent() {
         return (DataContainer) this.getIntent().getSerializableExtra(dataKey);
     }
 
-    private void loadPreferences(SharedPreferences sharedPref){
+    private void loadPreferences(SharedPreferences sharedPref) {
         String keyCheckPressure = ActivitySettings.KEYS[0];
         String keyCheckWindSpeed = ActivitySettings.KEYS[1];
-        boolean checkPressure = sharedPref.getBoolean(keyCheckPressure,true);
-        boolean checkWindSpeed = sharedPref.getBoolean(keyCheckWindSpeed,true);
+        boolean checkPressure = sharedPref.getBoolean(keyCheckPressure, true);
+        boolean checkWindSpeed = sharedPref.getBoolean(keyCheckWindSpeed, true);
 
         check(checkWindSpeed, windSpeed);
         check(checkPressure, pressure);
     }
 
-    private void savePreferences(SharedPreferences sharedPref){
+    private void savePreferences(SharedPreferences sharedPref) {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putBoolean(KEYS[0], pressure.isChecked());
         editor.putBoolean(KEYS[1], windSpeed.isChecked());

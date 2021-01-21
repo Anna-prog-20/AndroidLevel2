@@ -19,7 +19,9 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -127,7 +129,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             initNotificationChannel();
         }
         initSignIn();
-        //initViewAccount();
     }
 
     private void initSignIn() {
@@ -182,9 +183,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.itemAddTown: {
-                dialogFragment = BottomDialogFragment.newInstance();
-                dialogFragment.setOnFragmentDialogListener(onFragmentDialogListener);
-                dialogFragment.show(getSupportFragmentManager(), "dialogFragment");
+                addTown();
                 return true;
             }
             case R.id.itemHistoryWeather: {
@@ -212,6 +211,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    public void addTown() {
+        dialogFragment = BottomDialogFragment.newInstance();
+        dialogFragment.setOnFragmentDialogListener(onFragmentDialogListener);
+        dialogFragment.show(getSupportFragmentManager(), "dialogFragment");
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -219,8 +224,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             recreate();
         }
         if (requestCode == RC_SIGN_IN) {
-            // Когда сюда возвращается Task, результаты аутентификации уже
-            // готовы
+            // Когда сюда возвращается Task, результаты аутентификации уже готовы
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
         }
@@ -313,8 +317,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
 
-        //initViewAccount();
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -332,8 +334,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                             public void onClick(View v) {
                                                 if (buttonSignIn.getText() == getResources().getText(R.string.nav_header_button_Enter)) {
                                                     signIn();
-                                                }
-                                                else {
+                                                } else {
                                                     signOut();
                                                 }
                                             }
@@ -490,8 +491,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // Пользователь уже входил
             textButtonSignIn = getResources().getString(R.string.nav_header_button_Exit);
             textNameAccountView = account.getEmail();
-
-            // Обновим почтовый адрес этого пользователя и выведем его на экран
             updateUI(account.getEmail());
         }
 
@@ -530,7 +529,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    // Обновляем данные о пользователе на экране
+    // Обновляем данные
     private void updateUI(String idToken) {
         buttonSignIn.setText(getResources().getText(R.string.nav_header_button_Exit));
         nameAccountView.setText(idToken);

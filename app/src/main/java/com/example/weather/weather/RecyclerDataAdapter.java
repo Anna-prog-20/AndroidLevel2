@@ -13,7 +13,7 @@ import com.example.weather.R;
 import java.util.ArrayList;
 
 public class RecyclerDataAdapter extends RecyclerView.Adapter<RecyclerDataAdapter.ViewHolder> {
-    private ArrayList<String> dataHeading,dataText;
+    private ArrayList<String> dataHeading, dataText;
 
     public RecyclerDataAdapter(ArrayList<String> dataHeading, ArrayList<String> dataText) {
         this.dataHeading = dataHeading;
@@ -30,10 +30,9 @@ public class RecyclerDataAdapter extends RecyclerView.Adapter<RecyclerDataAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if(dataText!=null) {
+        if (dataText != null) {
             holder.setTextToTextView(dataHeading.get(position), dataText.get(position));
-        }
-        else if (dataHeading!=null) {
+        } else if (dataHeading != null) {
             holder.setTextToTextView(dataHeading.get(position));
         }
     }
@@ -58,7 +57,7 @@ public class RecyclerDataAdapter extends RecyclerView.Adapter<RecyclerDataAdapte
             itemText = itemView.findViewById(R.id.itemText);
         }
 
-        void setTextToTextView(String textHeading,String text) {
+        void setTextToTextView(String textHeading, String text) {
             itemHeading.setText(textHeading);
             itemText.setText(text);
         }

@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import com.example.weather.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-public class BottomDialogFragment  extends BottomSheetDialogFragment {
+public class BottomDialogFragment extends BottomSheetDialogFragment {
 
     private EditText editText;
     private OnFragmentDialogListener onFragmentDialogListener;

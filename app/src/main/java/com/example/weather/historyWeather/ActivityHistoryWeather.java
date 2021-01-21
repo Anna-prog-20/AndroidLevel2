@@ -44,7 +44,7 @@ public class ActivityHistoryWeather extends AppCompatActivity implements Navigat
     public void onBackPressed() {
         super.onBackPressed();
         int countOfFragmentInManager = getSupportFragmentManager().getBackStackEntryCount();
-        if(countOfFragmentInManager > 0) {
+        if (countOfFragmentInManager > 0) {
             getSupportFragmentManager().popBackStack();
         }
     }
@@ -71,7 +71,7 @@ public class ActivityHistoryWeather extends AppCompatActivity implements Navigat
                 return true;
             }
 
-        } );
+        });
         return true;
     }
 

@@ -34,9 +34,9 @@ public class RecyclerDataAdapterHistoryWeather extends RecyclerView.Adapter<Recy
     public ViewHolderHistoryWeather onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_history_weather, parent,
                 false);
-        view.findViewById(R.id.itemTown).getLayoutParams().width = parent.getWidth()*4/9;
-        view.findViewById(R.id.itemDate).getLayoutParams().width = parent.getWidth()/3;
-        view.findViewById(R.id.itemTemp).getLayoutParams().width = parent.getWidth()*2/9;
+        view.findViewById(R.id.itemTown).getLayoutParams().width = parent.getWidth() * 4 / 9;
+        view.findViewById(R.id.itemDate).getLayoutParams().width = parent.getWidth() / 3;
+        view.findViewById(R.id.itemTemp).getLayoutParams().width = parent.getWidth() * 2 / 9;
         return new ViewHolderHistoryWeather(view);
     }
 
@@ -44,7 +44,7 @@ public class RecyclerDataAdapterHistoryWeather extends RecyclerView.Adapter<Recy
     public void onBindViewHolder(@NonNull ViewHolderHistoryWeather holder, int position) {
         List<HistoryWeather> historyWeathers = weatherSource.getHistoryWeathers();
         HistoryWeather historyWeather = historyWeathers.get(position);
-        holder.setTextToTextViews(historyWeather.getTown(),historyWeather.getDate(),historyWeather.getTemp());
+        holder.setTextToTextViews(historyWeather.getTown(), historyWeather.getDate(), historyWeather.getTemp());
         holder.setOnClickForItem(historyWeather.getTown());
     }
 
@@ -86,7 +86,7 @@ public class RecyclerDataAdapterHistoryWeather extends RecyclerView.Adapter<Recy
             town.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(onItemClickCallback != null) {
+                    if (onItemClickCallback != null) {
                         onItemClickCallback.onItemClicked(text);
                     }
                 }

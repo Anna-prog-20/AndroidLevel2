@@ -28,15 +28,16 @@ public class ActivityWeather extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_weather);
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Intent intent = new Intent(this, MainActivity.class);
-            currentData=(DataContainer) Objects.requireNonNull(getIntent().getExtras()).getSerializable(FragmentWeather.dataKey);
-            intent.putExtra(FragmentWeather.dataKey,currentData);
+            currentData = (DataContainer) Objects.requireNonNull(getIntent().getExtras()).getSerializable(FragmentWeather.dataKey);
+            intent.putExtra(FragmentWeather.dataKey, currentData);
             startActivity(intent);
             finish();
             return;
         }
-        if(savedInstanceState==null){
+        if (savedInstanceState == null) {
             final FragmentWeather details = new FragmentWeather();
             details.setArguments(getIntent().getExtras());
             new Thread(new Runnable() {
@@ -47,24 +48,23 @@ public class ActivityWeather extends AppCompatActivity {
                     }
                 }
             }).start();
-
         }
     }
 
-    private boolean check(double d){
+    private boolean check(double d) {
         return d != 0;
     }
 
     @Override
     protected void onPause() {
-        currentData=(DataContainer) Objects.requireNonNull(getIntent().getExtras()).getSerializable(FragmentWeather.dataKey);
+        currentData = (DataContainer) Objects.requireNonNull(getIntent().getExtras()).getSerializable(FragmentWeather.dataKey);
         super.onPause();
     }
 
     @Override
     public void onSaveInstanceState(@Nullable Bundle saveInstanceState) {
         assert saveInstanceState != null;
-        saveInstanceState.putSerializable(FragmentWeather.dataKey,currentData);
+        saveInstanceState.putSerializable(FragmentWeather.dataKey, currentData);
         super.onSaveInstanceState(saveInstanceState);
     }
 
@@ -88,7 +88,7 @@ public class ActivityWeather extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.itemInfoTown: {
-                Uri uri = Uri.parse("https://ru.wikipedia.org/wiki/"+town);
+                Uri uri = Uri.parse("https://ru.wikipedia.org/wiki/" + town);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
                 return true;
@@ -104,8 +104,8 @@ public class ActivityWeather extends AppCompatActivity {
             }
             case R.id.itemSetting: {
                 Intent intent = new Intent(this, ActivitySettings.class);
-                currentData=(DataContainer) Objects.requireNonNull(getIntent().getExtras()).getSerializable(FragmentWeather.dataKey);
-                intent.putExtra(FragmentWeather.dataKey,currentData);
+                currentData = (DataContainer) Objects.requireNonNull(getIntent().getExtras()).getSerializable(FragmentWeather.dataKey);
+                intent.putExtra(FragmentWeather.dataKey, currentData);
                 startActivity(intent);
                 return true;
             }

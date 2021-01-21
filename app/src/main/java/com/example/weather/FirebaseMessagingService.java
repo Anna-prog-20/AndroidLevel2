@@ -18,7 +18,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         String title = remoteMessage.getNotification().getTitle();
-        if (title == null){
+        if (title == null) {
             title = "Уведомление!";
         }
         String text = remoteMessage.getNotification().getBody();

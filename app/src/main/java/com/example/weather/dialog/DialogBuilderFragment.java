@@ -60,8 +60,7 @@ public class DialogBuilderFragment extends DialogFragment {
                         }
                     })
                     .setMessage(R.string.message_dialog);
-        } else
-        {
+        } else {
             builder = new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.title_dialog)
                     .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

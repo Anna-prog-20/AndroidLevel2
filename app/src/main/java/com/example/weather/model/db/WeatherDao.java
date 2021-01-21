@@ -67,6 +67,9 @@ public interface WeatherDao {
     @Query("DELETE FROM town WHERE id = :id")
     void deleteTownById(long id);
 
+    @Query("DELETE FROM town WHERE town = :town")
+    void deleteTownByTown(String town);
+
     @Query("DELETE FROM town")
     void deleteAllTown();
 
